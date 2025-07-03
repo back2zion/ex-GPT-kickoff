@@ -774,50 +774,128 @@
                 <div class="mermaid-container">
                     <div class="mermaid">
                         %%{init: {'themeVariables': { 'height': '1200px'}}}%%
-                        flowchart LR
+                        flowchart TB
                             subgraph "사용자 인터페이스"
                                 A["웹 브라우저"]
                                 B["ex-GPT 포털"]
                                 C["모바일 앱"]
                             end
-                            subgraph "AI 처리 계층"
+                            
+                            subgraph "AI 라우팅 계층"
                                 D["LangGraph 라우팅"]
-                                E["최신 LLM(Llama4 등)"]
-                                F["RAG 검색"]
-                                G["MCP 도구"]
-                                H1["Florence-2 Vision"]
-                                H2["Whisper STT"]
+                                E["질의 유형 분석"]
                             end
+                            
+                            subgraph "AI 처리 엔진"
+                                F1["최신 LLM<br/>QWen3-235B/Llama4-400B/MiniMax-M1"]
+                                F2["RAG 검색<br/>벡터 유사도 기반"]
+                                F3["Florence-2-Large<br/>이미지 분석"]
+                                F4["Whisper-Large-v3<br/>음성 인식"]
+                            end
+                            
+                            subgraph "MCP 도구 실행 계층"
+                                G1["MCP 도구 유형 분석"]
+                                G2["회의실 예약<br/>API 호출"]
+                                G3["배차 신청<br/>API 호출"]
+                                G4["조직도 검색<br/>API 호출"]
+                            end
+                            
+                            subgraph "외부 시스템"
+                                H1["모바일 오피스<br/>회의실 시스템"]
+                                H2["차량 관리<br/>시스템"]
+                                H3["인사 정보<br/>시스템"]
+                                H4["하이포털<br/>통합 시스템"]
+                            end
+                            
                             subgraph "데이터 계층"
-                                H["Qdrant Vector DB"]
-                                I["개인정보 검출 엔진"]
-                                J["외부 시스템 API"]
+                                I["Qdrant Vector DB"]
+                                J["개인정보 검출 엔진"]
                                 K1["이미지 인덱스"]
                                 K2["음성 전사 DB"]
                             end
+                            
                             subgraph "하드웨어 인프라"
-                                K["GPU Cluster"]
-                                L["SSD 스토리지"]
+                                L["H100 GPU Cluster"]
+                                M["고속 SSD 스토리지"]
                             end
+                            
+                            %% 사용자 플로우
                             A --> B
                             C --> B
                             B --> D
                             D --> E
-                            D --> F
-                            D --> G
-                            D --> H1
-                            D --> H2
-                            F --> H
-                            H1 --> K1
-                            H2 --> K2
-                            K1 --> H
-                            K2 --> H
-                            E --> I
-                            E --> K
-                            H1 --> K
-                            H2 --> K
-                            G --> J
-                            H --> L
+                            
+                            %% AI 처리 분기
+                            E --> F1
+                            E --> F2
+                            E --> G1
+                            E --> F3
+                            E --> F4
+                            
+                            %% RAG 검색
+                            F2 --> I
+                            I --> F1
+                            
+                            %% MCP 도구 실행
+                            G1 --> G2
+                            G1 --> G3
+                            G1 --> G4
+                            
+                            %% 외부 시스템 연동
+                            G2 --> H1
+                            G3 --> H2
+                            G4 --> H3
+                            G2 --> H4
+                            G3 --> H4
+                            G4 --> H4
+                            
+                            %% 실행 결과 반환
+                            H1 --> N["실행 결과<br/>확인 및 응답"]
+                            H2 --> N
+                            H3 --> N
+                            H4 --> N
+                            
+                            %% 멀티모달 처리
+                            F3 --> K1
+                            F4 --> K2
+                            K1 --> I
+                            K2 --> I
+                            
+                            %% 최종 답변 생성
+                            F1 --> O["답변 생성<br/>및 검증"]
+                            N --> O
+                            F3 --> O
+                            F4 --> O
+                            
+                            %% 출력
+                            O --> P["마크다운<br/>형식 출력"]
+                            P --> Q["파일 다운로드<br/>콘텐츠 프리뷰"]
+                            
+                            %% 하드웨어 연결
+                            F1 --> L
+                            F3 --> L
+                            F4 --> L
+                            I --> M
+                            
+                            %% 보안 및 모니터링
+                            F1 --> J
+                            O --> R["시스템 성능<br/>모니터링"]
+                            R --> S["월별 품질<br/>점검 보고서"]
+                            
+                            %% 스타일링
+                            classDef userInterface fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                            classDef aiProcessing fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                            classDef mcpTools fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                            classDef external fill:#ffecb3,stroke:#ff8f00,stroke-width:2px
+                            classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                            classDef hardware fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+                            
+                            class A,B,C userInterface
+                            class D,E,F1,F2,F3,F4,O,P,Q aiProcessing
+                            class G1,G2,G3,G4,N mcpTools
+                            class H1,H2,H3,H4 external
+                            class I,J,K1,K2 storage
+                            class L,M,R,S hardware
                         </div>
                     </div>
                     <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
@@ -1153,6 +1231,14 @@
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1976d2',
+                primaryBorderColor: '#1976d2',
+                lineColor: '#757575',
+                secondaryColor: '#f3e5f5',
+                tertiaryColor: '#e8f5e8'
+            },
             flowchart: {
                 useMaxWidth: true,
                 htmlLabels: true,
@@ -1160,7 +1246,105 @@
             }
         });
 
+        // 호버 효과를 위한 스타일 추가
         document.addEventListener('DOMContentLoaded', function() {
+            // Mermaid 다이어그램이 렌더링된 후 실행
+            setTimeout(() => {
+                const style = document.createElement('style');
+                style.textContent = `
+                    /* Mermaid 노드 호버 효과 */
+                    .mermaid .node rect,
+                    .mermaid .node circle,
+                    .mermaid .node ellipse,
+                    .mermaid .node polygon {
+                        transition: all 0.3s ease !important;
+                        cursor: pointer !important;
+                    }
+                    
+                    .mermaid .node:hover rect,
+                    .mermaid .node:hover circle,
+                    .mermaid .node:hover ellipse,
+                    .mermaid .node:hover polygon {
+                        filter: drop-shadow(0 8px 16px rgba(25, 118, 210, 0.4)) !important;
+                        stroke-width: 3px !important;
+                    }
+                    
+                    /* 텍스트 호버 효과 */
+                    .mermaid .node:hover .nodeLabel {
+                        font-weight: bold !important;
+                        font-size: 14px !important;
+                        fill: #0d47a1 !important;
+                    }
+                    
+                    /* MCP 도구에 대한 특별 처리 */
+                    .mermaid .node.mcpTools:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(245, 124, 0, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.external:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(255, 143, 0, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.storage:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(56, 142, 60, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.hardware:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(194, 24, 91, 0.4)) !important;
+                    }
+                    
+                    /* 연결선 효과 */
+                    .mermaid .flowchart-link {
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .mermaid .node:hover ~ .flowchart-link,
+                    .mermaid .flowchart-link:hover {
+                        stroke-width: 4px !important;
+                        stroke: #1976d2 !important;
+                        filter: drop-shadow(0 2px 4px rgba(25, 118, 210, 0.3)) !important;
+                    }
+                    
+                    /* 전체적인 다이어그램 영역 효과 */
+                    .mermaid {
+                        border-radius: 12px !important;
+                        padding: 2rem !important;
+                        background: linear-gradient(135deg, #f8f9ff 0%, #f0f7ff 100%) !important;
+                        border: 1px solid #e3f2fd !important;
+                    }
+                    
+                    /* 호버 시 주변 노드 연결 하이라이트 */
+                    .mermaid .node:hover {
+                        z-index: 10 !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // 각 노드에 이벤트 리스너 추가
+                const nodes = document.querySelectorAll('.mermaid .node');
+                nodes.forEach(node => {
+                    node.addEventListener('mouseenter', function() {
+                        // 연결된 노드들에 약간의 하이라이트 효과 추가
+                        const nodeId = this.getAttribute('id');
+                        if (nodeId) {
+                            const connectedEdges = document.querySelectorAll(`[marker-end*="${nodeId}"], [marker-start*="${nodeId}"]`);
+                            connectedEdges.forEach(edge => {
+                                edge.style.strokeWidth = '3px';
+                                edge.style.stroke = '#1976d2';
+                            });
+                        }
+                    });
+                    
+                    node.addEventListener('mouseleave', function() {
+                        // 연결된 노드들의 하이라이트 효과 제거
+                        const edges = document.querySelectorAll('.mermaid .flowchart-link');
+                        edges.forEach(edge => {
+                            edge.style.strokeWidth = '';
+                            edge.style.stroke = '';
+                        });
+                    });
+                });
+            }, 1000); // Mermaid 렌더링을 위해 1초 대기
             // 카드 애니메이션
             const cards = document.querySelectorAll('.function-category');
             cards.forEach((card, index) => {

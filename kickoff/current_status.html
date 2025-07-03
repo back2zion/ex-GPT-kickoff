@@ -631,9 +631,12 @@
                 I1 --> J4[🖼️ 이미지 검색<br/>Florence-2 기반]
                 I1 --> J5[🎤 음성 처리<br/>Whisper STT]
 
-                %% 답변 생성 및 출력
-                J1 --> K1[답변 생성<br/>및 검증]
-                J2 --> K1
+                %% RAG 검색과 벡터 DB 연결
+                J2 --> E1
+                E1 --> K1[답변 생성<br/>및 검증]
+
+                %% 기타 모델들도 답변 생성으로 연결
+                J1 --> K1
                 J3 --> K1
                 J4 --> K1
                 J5 --> K1
@@ -652,12 +655,12 @@
                 classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
                 classDef userFlow fill:#fff3e0,stroke:#f57c00,stroke-width:2px
                 classDef output fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+                classDef external fill:#ffecb3,stroke:#ff8f00,stroke-width:2px
 
                 class A1,A2,A3,A4,A5,A6 inputData
                 class B1,B2,B3,C1,D1,D2,D3 processing
                 class E1,E2 storage
                 class F1,G1,H1,H2,I1,J1,J2,J3,J4,J5,K1 userFlow
-                class L1,L2,M1,M2 output
         </div>
         <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
             <h3 style="color: #1976d2; margin-bottom: 1rem;">🔧 핵심 기술 스택</h3>
@@ -685,7 +688,119 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
     <script>
-        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1976d2',
+                primaryBorderColor: '#1976d2',
+                lineColor: '#757575',
+                secondaryColor: '#f3e5f5',
+                tertiaryColor: '#e8f5e8'
+            }
+        });
+        
+        // 호버 효과를 위한 스타일 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mermaid 다이어그램이 렌더링된 후 실행
+            setTimeout(() => {
+                const style = document.createElement('style');
+                style.textContent = `
+                    /* Mermaid 노드 호버 효과 */
+                    .mermaid .node rect,
+                    .mermaid .node circle,
+                    .mermaid .node ellipse,
+                    .mermaid .node polygon {
+                        transition: all 0.3s ease !important;
+                        cursor: pointer !important;
+                    }
+                    
+                    .mermaid .node:hover rect,
+                    .mermaid .node:hover circle,
+                    .mermaid .node:hover ellipse,
+                    .mermaid .node:hover polygon {
+                        filter: drop-shadow(0 8px 16px rgba(25, 118, 210, 0.4)) !important;
+                        stroke-width: 3px !important;
+                    }
+                    
+                    /* 텍스트 호버 효과 */
+                    .mermaid .node:hover .nodeLabel {
+                        font-weight: bold !important;
+                        font-size: 14px !important;
+                        fill: #0d47a1 !important;
+                    }
+                    
+                    /* 어두운 배경 노드에 대한 특별 처리 */
+                    .mermaid .node.processing:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(123, 31, 162, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.storage:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(56, 142, 60, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.userFlow:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(245, 124, 0, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.output:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(194, 24, 91, 0.4)) !important;
+                    }
+                    
+                    /* 연결선 효과 */
+                    .mermaid .flowchart-link {
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .mermaid .node:hover ~ .flowchart-link,
+                    .mermaid .flowchart-link:hover {
+                        stroke-width: 4px !important;
+                        stroke: #1976d2 !important;
+                        filter: drop-shadow(0 2px 4px rgba(25, 118, 210, 0.3)) !important;
+                    }
+                    
+                    /* 전체적인 다이어그램 영역 효과 */
+                    .mermaid {
+                        border-radius: 12px !important;
+                        padding: 2rem !important;
+                        background: linear-gradient(135deg, #f8f9ff 0%, #f0f7ff 100%) !important;
+                        border: 1px solid #e3f2fd !important;
+                    }
+                    
+                    /* 호버 시 주변 노드 연결 하이라이트 */
+                    .mermaid .node:hover {
+                        z-index: 10 !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // 각 노드에 이벤트 리스너 추가
+                const nodes = document.querySelectorAll('.mermaid .node');
+                nodes.forEach(node => {
+                    node.addEventListener('mouseenter', function() {
+                        // 연결된 노드들에 약간의 하이라이트 효과 추가
+                        const nodeId = this.getAttribute('id');
+                        if (nodeId) {
+                            const connectedEdges = document.querySelectorAll(`[marker-end*="${nodeId}"], [marker-start*="${nodeId}"]`);
+                            connectedEdges.forEach(edge => {
+                                edge.style.strokeWidth = '3px';
+                                edge.style.stroke = '#1976d2';
+                            });
+                        }
+                    });
+                    
+                    node.addEventListener('mouseleave', function() {
+                        // 연결된 노드들의 하이라이트 효과 제거
+                        const edges = document.querySelectorAll('.mermaid .flowchart-link');
+                        edges.forEach(edge => {
+                            edge.style.strokeWidth = '';
+                            edge.style.stroke = '';
+                        });
+                    });
+                });
+            }, 1000); // Mermaid 렌더링을 위해 1초 대기
+        });
     </script>
 
 
