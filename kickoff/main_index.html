@@ -114,19 +114,45 @@
             border-bottom-color: #1976d2;
         }
 
-        /* 드롭다운 메뉴 */
-        .dropdown-menu {
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        /* 드롭다운이 호버 영역을 벗어나지 않도록 보이지 않는 영역 추가 */
+        .nav-item::before {
+            content: '';
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
+            height: 10px;
+            background: transparent;
+            z-index: 1500;
+        }
+
+        /* 개선된 드롭다운 메뉴 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -50px;
+            min-width: 600px;
             background: #1976d2;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 2000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px;
         }
 
         .nav-item:hover .dropdown-menu {
@@ -137,12 +163,12 @@
 
         .dropdown-content {
             width: 100%;
-            padding: 2rem 4rem;
+            padding: 2rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: none;
+            margin: 0;
         }
 
         .dropdown-section {
@@ -154,21 +180,29 @@
             font-weight: 700;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .dropdown-item {
             display: block;
             color: rgba(255,255,255,0.9);
             text-decoration: none;
-            padding: 0.5rem 0;
+            padding: 0.8rem 0;
             font-size: 0.9rem;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+            margin-left: -0.5rem;
         }
 
         .dropdown-item:hover {
             color: white;
             text-decoration: none;
+            border-left-color: white;
+            background: rgba(255,255,255,0.1);
+            padding-left: 1rem;
         }
 
         /* 히어로 섹션 */
@@ -434,38 +468,17 @@
                         <div class="dropdown-content">
                             <div class="dropdown-section">
                                 <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
-                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏛️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
                                 <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
-                                <a href="interview_results.html#interview-overview" class="dropdown-item">📋 전체 인터뷰 현황 (34개 부서)</a>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="nav-item">
                     <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
-                    <div class="dropdown-menu">
-                        <div class="dropdown-content">
-                            <div class="dropdown-section">
-                                <div class="dropdown-section-title">📊 학습데이터 비교</div>
-                                <a href="current_status.html#current-data" class="dropdown-item">📈 AS-IS: 현재 데이터 현황</a>
-                                <a href="current_status.html#target-data" class="dropdown-item">🎯 TO-BE: 목표 데이터 체계</a>
-                                <a href="current_status.html#data-comparison" class="dropdown-item">⚖️ 데이터 품질 비교</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="nav-item">
                     <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
-                    <div class="dropdown-menu">
-                        <div class="dropdown-content">
-                            <div class="dropdown-section">
-                                <div class="dropdown-section-title">⚙️ 기능 비교</div>
-                                <a href="enhancement_plan.html#current-functions" class="dropdown-item">🔍 AS-IS: 현재 기능</a>
-                                <a href="enhancement_plan.html#target-functions" class="dropdown-item">🚀 TO-BE: 목표 기능</a>
-                                <a href="enhancement_plan.html#implementation-timeline" class="dropdown-item">📅 구현 일정</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </nav>
         </div>
