@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ex-GPT 고도화 용역 착수보고서 | 한국도로공사</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* 상단 유틸리티 바 */
+        .utility-bar {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            height: 33px;
+            line-height: 1;
+        }
+
+        .utility-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .utility-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+
+        .utility-bar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 메인 헤더 */
+        .main-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: fixed;
+            top: 33px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+
+        .header-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #1976d2;
+            border-bottom-color: #1976d2;
+        }
+
+        /* 드롭다운 메뉴 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1976d2;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-content {
+            width: 100%;
+            padding: 2rem 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dropdown-section {
+            color: white;
+        }
+
+        .dropdown-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .dropdown-item {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* 히어로 섹션 */
+        .hero-section {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-top: 113px;
+            text-align: center;
+        }
+
+        .hero-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 프로젝트 정보 */
+        .project-info {
+            background: #f8f9fa;
+            padding: 3rem 0;
+        }
+
+        .info-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            padding: 4rem 0;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #333;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        /* 네비게이션 카드 */
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #1976d2;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: #1976d2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info {
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="main_index.html">
+                    <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏛️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                                <a href="interview_results.html#interview-overview" class="dropdown-item">📋 전체 인터뷰 현황 (34개 부서)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📊 학습데이터 비교</div>
+                                <a href="current_status.html#current-data" class="dropdown-item">📈 AS-IS: 현재 데이터 현황</a>
+                                <a href="current_status.html#target-data" class="dropdown-item">🎯 TO-BE: 목표 데이터 체계</a>
+                                <a href="current_status.html#data-comparison" class="dropdown-item">⚖️ 데이터 품질 비교</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">⚙️ 기능 비교</div>
+                                <a href="enhancement_plan.html#current-functions" class="dropdown-item">🔍 AS-IS: 현재 기능</a>
+                                <a href="enhancement_plan.html#target-functions" class="dropdown-item">🚀 TO-BE: 목표 기능</a>
+                                <a href="enhancement_plan.html#implementation-timeline" class="dropdown-item">📅 구현 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title">ex-GPT 고도화 용역</h1>
+            <p class="hero-subtitle">착수보고</p>
+        </div>
+    </section>
+
+    <!-- 프로젝트 정보 -->
+    <section class="project-info">
+        <div class="info-container">
+            <h2 class="info-title">프로젝트 개요</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">수행사</div>
+                    <div class="info-value">주식회사 데이터스트림즈</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">대표이사</div>
+                    <div class="info-value">이영상</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">프로젝트 기간</div>
+                    <div class="info-value">2025.06.09 ~ 2025.12.31</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">목표 일정</div>
+                    <div class="info-value">2025.07.15 1차 오픈</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 메인 콘텐츠 -->
+    <section class="main-content">
+        <div class="content-container">
+            <h2 class="section-title">보고서 목차</h2>
+            <div class="nav-cards">
+                <a href="company_overview.html" class="nav-card">
+                    <div class="card-number">1</div>
+                    <div class="card-title">데이터스트림즈 현황</div>
+                    <p class="card-description">
+                        회사 개요, 기술 역량, 프로젝트 경험 및 ex-GPT 수행을 위한 핵심 역량을 소개합니다.
+                    </p>
+                </a>
+
+                <a href="team_organization.html" class="nav-card">
+                    <div class="card-number">2</div>
+                    <div class="card-title">투입인력, 조직, 일정</div>
+                    <p class="card-description">
+                        프로젝트 수행팀 구성, 역할 분담, 단계별 일정 계획 및 R&R 매트릭스를 제시합니다.
+                    </p>
+                </a>
+
+                <a href="interview_results.html" class="nav-card">
+                    <div class="card-number">3</div>
+                    <div class="card-title">순회 인터뷰 결과 분석 및 시사점</div>
+                    <p class="card-description">
+                        감사처, 기획처, ITS처 등 각 부처별 요구사항 분석 및 개선 방향을 정리합니다.
+                    </p>
+                </a>
+
+                <a href="current_status.html" class="nav-card">
+                    <div class="card-number">4</div>
+                    <div class="card-title">학습데이터 AS-IS vs TO-BE</div>
+                    <p class="card-description">
+                        기존 학습데이터 현황과 목표 데이터 체계를 비교 분석하여 개선 방향을 제시합니다.
+                    </p>
+                </a>
+
+                <a href="enhancement_plan.html" class="nav-card">
+                    <div class="card-number">5</div>
+                    <div class="card-title">기능 AS-IS vs TO-BE</div>
+                    <p class="card-description">
+                        현재 기능과 목표 기능을 비교하여 ex-GPT 고도화 방안과 단계별 구현 계획을 제공합니다.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × 주식회사 데이터스트림즈<br>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 카드 애니메이션
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

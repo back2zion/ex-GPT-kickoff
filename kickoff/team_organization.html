@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. 투입인력, 조직, 일정 - ex-GPT 프로젝트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* 상단 유틸리티 바 */
+        .utility-bar {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1001;
+            height: 33px;
+            line-height: 1;
+        }
+
+        .utility-container {
+            width: 100%;
+            max-width: none;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .utility-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+
+        .utility-bar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 메인 헤더 */
+        .main-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: fixed;
+            top: 33px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+
+        .header-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #1976d2;
+            border-bottom-color: #1976d2;
+        }
+
+        /* 드롭다운 메뉴 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -50px;
+            min-width: 600px;
+            background: #1976d2;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-content {
+            width: 100%;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: none;
+            margin: 0;
+        }
+
+        .dropdown-section {
+            color: white;
+        }
+
+        .dropdown-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-item {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 0.8rem 0;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+            margin-left: -0.5rem;
+        }
+
+        .dropdown-item:hover {
+            color: white;
+            text-decoration: none;
+            border-left-color: white;
+            background: rgba(255,255,255,0.1);
+            padding-left: 1rem;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: transparent;
+            z-index: 1500;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* 알림 */
+        .alert {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            color: #2e7d32;
+        }
+
+        .alert strong {
+            color: #1b5e20;
+        }
+
+        /* 컨텐츠 그리드 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 4px solid #1976d2;
+        }
+
+        /* 카드 드롭다운 스타일링 */
+        .card-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+
+        .card-dropdown.active {
+            max-height: 3000px;
+            margin-top: 20px;
+        }
+
+        .dropdown-feature {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-feature:hover {
+            background: #e3f2fd !important;
+        }
+
+        .dropdown-arrow {
+            float: right;
+            transition: transform 0.3s ease;
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .dropdown-feature.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        /* 팀 테이블 */
+        .team-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .team-table th,
+        .team-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .team-table th {
+            background: #1976d2;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .team-table td {
+            color: #333;
+        }
+
+        .team-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* 타임라인 */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #1976d2;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 1rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #1976d2;
+            border: 3px solid #e3f2fd;
+            box-shadow: 0 0 0 6px rgba(25, 118, 210, 0.1);
+        }
+
+        .timeline-date {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .timeline-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1976d2;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* 3트랙 스케줄 - 개선된 3단 레이아웃 */
+        .schedule-tracks {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .track {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 6px solid #1976d2;
+            min-height: 800px;
+        }
+
+        .track:nth-child(1) {
+            border-left-color: #4caf50; /* 녹색 - 기획/품질 */
+        }
+
+        .track:nth-child(2) {
+            border-left-color: #ff9800; /* 주황색 - 기능 개발 */
+        }
+
+        .track:nth-child(3) {
+            border-left-color: #e91e63; /* 핑크색 - 서비스 론칭 */
+        }
+
+        .track-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .track-icon {
+            font-size: 1.8rem;
+            margin-right: 1rem;
+        }
+
+        .track-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .track-subtitle {
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .track-timeline {
+            position: relative;
+        }
+
+        .track-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1rem;
+            width: 2px;
+            background: linear-gradient(to bottom, #e0e0e0, #bdbdbd);
+            border-radius: 1px;
+        }
+
+        .milestone {
+            position: relative;
+            margin-bottom: 1.8rem;
+            padding-left: 3rem;
+        }
+
+        .milestone-marker {
+            position: absolute;
+            left: 0.2rem;
+            top: 0.3rem;
+            width: 1.6rem;
+            height: 1.6rem;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.7rem;
+            box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
+        }
+
+        .track:nth-child(1) .milestone-marker {
+            background: #4caf50;
+        }
+
+        .track:nth-child(2) .milestone-marker {
+            background: #ff9800;
+        }
+
+        .track:nth-child(3) .milestone-marker {
+            background: #e91e63;
+        }
+
+        .milestone-content {
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e3f2fd;
+            transition: all 0.3s ease;
+        }
+
+        .milestone-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .milestone-date {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .milestone-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .milestone-description {
+            color: #666;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .milestone-items {
+            margin-top: 0.5rem;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.3rem;
+            font-size: 0.75rem;
+            color: #555;
+            line-height: 1.3;
+        }
+
+        .milestone-item::before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 0.4rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+        }
+
+        /* 하이라이트 */
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            color: #856404;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info {
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        /* 백 버튼 */
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 1200px) {
+            .dropdown-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            
+            .dropdown-menu {
+                left: -100px;
+                min-width: 500px;
+            }
+            
+            .schedule-tracks {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .team-table {
+                font-size: 0.8rem;
+            }
+
+            .utility-container, .header-container, .content-container, .footer-container {
+                padding: 0 2rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+            }
+
+            .milestone {
+                padding-left: 2.5rem;
+            }
+
+            .milestone-marker {
+                width: 1.4rem;
+                height: 1.4rem;
+                left: 0.1rem;
+            }
+
+            .schedule-tracks {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="main_index.html">
+                    <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link active">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">2. 투입인력, 조직, 일정</h1>
+                <p class="page-subtitle">💼 프로젝트 수행을 위한 인적 자원 및 일정 계획</p>
+            </div>
+
+            <div class="alert">
+                <strong>🎯 목표:</strong> 7월 15일 1차 오픈 후 단계적으로 기능 추가하면서 완성도를 높이기 위한 체계적 인력 구성 및 개발 일정 수립
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card" id="team-table">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('team-composition')">
+                        👥 핵심 팀 구성
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="team-composition">
+                        <table class="team-table">
+                            <thead>
+                                <tr>
+                                    <th>👤 역할</th>
+                                    <th>👨‍💼 담당자</th>
+                                    <th>🎯 주요 업무</th>
+                                    <th>📋 세부 업무</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>🎯 프로젝트 매니저</td>
+                                    <td><strong>곽두일 PM</strong></td>
+                                    <td>프로젝트 전체 총괄 관리</td>
+                                    <td>일정, 예산, 품질, 위험 관리<br/>고객사(한국도로공사) 대응 및 관계 관리</td>
+                                </tr>
+                                <tr>
+                                    <td>🤖 AI 기능 개발자</td>
+                                    <td><strong>김하나 주임</strong></td>
+                                    <td>LangChain 기반 AI 애플리케이션 핵심 개발</td>
+                                    <td>LLM API 연동 및 프롬프트 엔지니어링<br/>멀티턴 대화 및 컨텍스트 메모리 관리<br/>RAG 파이프라인 구현 및 검색 시스템 최적화</td>
+                                </tr>
+                                <tr>
+                                    <td>⚙️ Web Backend 개발자</td>
+                                    <td><strong>원예지 주임</strong></td>
+                                    <td>웹 백엔드 개발 및 API 서버 구축</td>
+                                    <td>웹 백엔드 서버 개발 및 API 설계<br/>사용자 권한 체계 신규 설계 및 개발<br/>데이터 파이프라인 구축 및 파일 업로드 처리</td>
+                                </tr>
+                                <tr>
+                                    <td>🏗️ 인프라 전문가</td>
+                                    <td><strong>장영인 이사</strong></td>
+                                    <td>인프라 구축 및 시스템 아키텍처 설계</td>
+                                    <td>운영 환경 최적화 및 인프라 관리<br/>신규 기능 기획 및 요구사항 분석<br/>레거시 시스템 연동 설계 (전자조달, 재무, SSO)</td>
+                                </tr>
+                                <tr>
+                                    <td>💻 Frontend 개발자</td>
+                                    <td><strong>최종성 이사</strong></td>
+                                    <td>사용자 인터페이스 개발 및 UX 최적화</td>
+                                    <td>모던 웹 애플리케이션 구축<br/>반응형 디자인 및 모바일 최적화</td>
+                                </tr>
+                                <tr>
+                                    <td>🧪 QA 엔지니어</td>
+                                    <td><strong>구한모 대리</strong></td>
+                                    <td>전체 시스템 품질 보증 및 테스트 관리</td>
+                                    <td>테스트 시나리오 설계 및 자동화<br/>성능 테스트 및 보안 테스트 수행</td>
+                                </tr>
+                                <tr>
+                                    <td>🔬 AI 전문가팀</td>
+                                    <td><strong>연구소 AI팀 - 이동욱</strong></td>
+                                    <td>AI 시스템 핵심 기술 개발 및 구현</td>
+                                    <td>데이터 품질 관리 및 성능 최적화<br/>멀티턴 대화 및 컨텍스트 관리<br/>문서 전처리 및 파싱 기술 고도화<br/>API 인터페이스 설계 및 시스템 통합</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="highlight">
+                            <strong>💡 핵심 팀 구성 특징:</strong><br>
+                            • 🎯 곽두일 PM: 프로젝트 전체 총괄 및 고객 대응<br>
+                            • 🤖 김하나 주임: AI 기능 개발 및 LLM 통합 시스템 구현<br>
+                            • ⚙️ 원예지 주임: 웹 백엔드 및 API 서버 전문<br>
+                            • 🏗️ 장영인 이사: 인프라 및 시스템 아키텍처 설계<br>
+                            • 💻 최종성 이사: 모던 Frontend 및 UX/UI 전문<br>
+                            • 🧪 구한모 대리: 전체 시스템 QA 및 테스트 자동화<br>
+                            • 🔬 연구소 AI팀: 데이터 처리 및 고급 AI 기술 지원
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('team-roles')">
+                        🏢 주요 팀원 역할 및 책임
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="team-roles">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">🎯 곽두일 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">프로젝트 전체 총괄 및 고객사 관계 관리</div>
+                                    <div class="timeline-description">
+                                        • 📊 전체 프로젝트 관리 및 고객사 대응<br>
+                                        • ⏰ 일정, 예산, 품질, 위험 관리<br>
+                                        • 🤝 개발팀 기술 협업 조율 및 업무 분담 관리
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">🤖 김하나 주임</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">AI 기능 개발 및 LLM 통합 시스템 구현</div>
+                                    <div class="timeline-description">
+                                        • 🔗 LangChain 기반 AI 애플리케이션 핵심 개발<br>
+                                        • 🔧 LLM API 연동 및 프롬프트 엔지니어링<br>
+                                        • 💬 멀티턴 대화 및 컨텍스트 메모리 관리<br>
+                                        • 🔍 RAG 파이프라인 구현 및 검색 시스템 최적화
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">⚙️ 원예지 주임</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">웹 백엔드 개발 및 API 서버 구축</div>
+                                    <div class="timeline-description">
+                                        • 🌐 웹 백엔드 서버 개발 및 API 설계<br>
+                                        • 🔐 사용자 권한 체계 신규 설계 및 개발<br>
+                                        • 📁 데이터 파이프라인 구축 및 파일 업로드 처리<br>
+                                        • 🛡️ 보안 요구사항 충족 및 세션 관리
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">🏗️ 장영인 이사</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">인프라 구축 및 시스템 아키텍처 설계</div>
+                                    <div class="timeline-description">
+                                        • 🖥️ 운영 환경 최적화 및 인프라 관리<br>
+                                        • 💡 신규 기능 기획 및 요구사항 분석<br>
+                                        • 🔗 레거시 시스템 연동 설계 (전자조달, 재무, SSO)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">💻 최종성 이사</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Frontend 개발 및 사용자 경험 최적화</div>
+                                    <div class="timeline-description">
+                                        • 🎨 모던 웹 애플리케이션 구축<br>
+                                        • 👤 사용자 인터페이스 개발 및 UX 최적화<br>
+                                        • 📱 반응형 디자인 및 모바일 최적화<br>
+                                        • 🛠️ 관리도구 UI/UX 설계
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">🧪 구한모 대리</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">품질 보증 및 테스트 자동화</div>
+                                    <div class="timeline-description">
+                                        • ✅ 전체 시스템 품질 보증 및 테스트 관리<br>
+                                        • 📝 테스트 시나리오 설계 및 자동화 구현<br>
+                                        • ⚡ 성능 테스트 및 보안 테스트 수행<br>
+                                        • 👥 사용자 경험 개선 및 접근성 구현
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">🔬 연구소 AI팀</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">데이터 처리 및 고급 AI 기술 지원</div>
+                                    <div class="timeline-description">
+                                        • 📄 문서 전처리 및 파싱 기술 고도화<br>
+                                        • 🎯 데이터 품질 관리 및 중복 검증 시스템<br>
+                                        • 🔒 개인정보 검출 및 데이터 보안 관리<br>
+                                        • 🎤 STT 기반 회의록 작성 시스템 개발
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('project-schedule')">
+                        📅 프로젝트 일정 (3트랙 스케줄)
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="project-schedule">
+                        <div class="schedule-tracks">
+                            <!-- 기획/품질 트랙 -->
+                            <div class="track">
+                                <div class="track-header">
+                                    <div class="track-icon">📋</div>
+                                    <div>
+                                        <div class="track-title">기획 & 품질</div>
+                                        <div class="track-subtitle">요구사항 분석, 품질 관리, 테스트</div>
+                                    </div>
+                                </div>
+                                <div class="track-timeline">
+                                    <div class="track-line"></div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">7</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 7월</div>
+                                            <div class="milestone-title">기본 기능 안정화</div>
+                                            <div class="milestone-description">1차 오픈을 위한 기본 기능 품질 보증</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">기본 질의응답 시스템 안정화</div>
+                                                <div class="milestone-item">멀티턴 대화 품질 검증</div>
+                                                <div class="milestone-item">사용자 권한 체계 검증</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">8</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 8월</div>
+                                            <div class="milestone-title">파일 업로드 품질 관리</div>
+                                            <div class="milestone-description">파일 처리 및 문서 분석 기능 검증</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">파일 업로드 안정성 테스트</div>
+                                                <div class="milestone-item">문서 비교 분석 정확도 검증</div>
+                                                <div class="milestone-item">개인정보 검출 시스템 테스트</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">9</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 9월</div>
+                                            <div class="milestone-title">회의실 예약 연동 검증</div>
+                                            <div class="milestone-description">MCP 연동 및 마크다운 출력 검증</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">하이포털 MCP 연동 안정성 검증</div>
+                                                <div class="milestone-item">마크다운 출력 형식 표준화</div>
+                                                <div class="milestone-item">관리도구 테스트 및 검증</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">10</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 10월</div>
+                                            <div class="milestone-title">배차 신청 연동 검증</div>
+                                            <div class="milestone-description">특수 업무 지원 시스템 검증</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">MCP 배차 신청 연동 테스트</div>
+                                                <div class="milestone-item">공정별 위험성 평가 정확도 검증</div>
+                                                <div class="milestone-item">기술 교육 시스템 품질 보증</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">11</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 11월</div>
+                                            <div class="milestone-title">멀티모달 품질 검증</div>
+                                            <div class="milestone-description">이미지 검색 및 음성 인식 품질 관리</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">이미지/표/차트 검색 정확도 검증</div>
+                                                <div class="milestone-item">STT 음성 인식 품질 테스트</div>
+                                                <div class="milestone-item">회의록 요약 정확도 검증</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">12</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 12월</div>
+                                            <div class="milestone-title">최종 통합 검증</div>
+                                            <div class="milestone-description">전체 시스템 통합 품질 보증</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">하이포털 연동 종합 테스트</div>
+                                                <div class="milestone-item">성능 최적화 검증</div>
+                                                <div class="milestone-item">사용자 만족도 4.5/5.0 달성</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 기능 개발 트랙 -->
+                            <div class="track">
+                                <div class="track-header">
+                                    <div class="track-icon">⚙️</div>
+                                    <div>
+                                        <div class="track-title">기능 개발</div>
+                                        <div class="track-subtitle">AI 기능, Backend/Frontend 개발</div>
+                                    </div>
+                                </div>
+                                <div class="track-timeline">
+                                    <div class="track-line"></div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">7</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 7월</div>
+                                            <div class="milestone-title">멀티턴 대화 개발</div>
+                                            <div class="milestone-description">대화 컨텍스트 메모리 관리 시스템</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">LangGraph 멀티턴 대화 엔진</div>
+                                                <div class="milestone-item">대화 히스토리 관리 시스템</div>
+                                                <div class="milestone-item">컨텍스트 메모리 최적화</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">8</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 8월</div>
+                                            <div class="milestone-title">파일 업로드 분석 시스템</div>
+                                            <div class="milestone-description">문서 처리 및 비교 분석 기능</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">파일 업로드 API 개발</div>
+                                                <div class="milestone-item">문서 파싱 및 전처리 자동화</div>
+                                                <div class="milestone-item">문서 비교 분석 알고리즘</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">9</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 9월</div>
+                                            <div class="milestone-title">MCP 회의실 예약 연동</div>
+                                            <div class="milestone-description">하이포털 연동 및 마크다운 출력</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">MCP API 인터페이스 개발</div>
+                                                <div class="milestone-item">회의실 예약 시스템 연동</div>
+                                                <div class="milestone-item">마크다운 형식 출력 엔진</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">10</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 10월</div>
+                                            <div class="milestone-title">배차 신청 & 특수업무</div>
+                                            <div class="milestone-description">배차 연동 및 전문 업무 지원</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">MCP 배차 신청 API 연동</div>
+                                                <div class="milestone-item">공정별 위험성 평가 시스템</div>
+                                                <div class="milestone-item">기술 교육 지원 플랫폼</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">11</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 11월</div>
+                                            <div class="milestone-title">STT 이미지 검색</div>
+                                            <div class="milestone-description">멀티모달 검색 및 음성 인식</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">Whisper 기반 STT 시스템</div>
+                                                <div class="milestone-item">이미지/표/차트 검색 엔진</div>
+                                                <div class="milestone-item">회의록 요약 자동화 시스템</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">12</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 12월</div>
+                                            <div class="milestone-title">Knowledge Parser 최적화</div>
+                                            <div class="milestone-description">지식 처리 엔진 및 성능 최적화</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">고급 Knowledge Parser 개발</div>
+                                                <div class="milestone-item">검색 성능 최적화</div>
+                                                <div class="milestone-item">메뉴 통합 및 UI/UX 개선</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 서비스 론칭 트랙 -->
+                            <div class="track">
+                                <div class="track-header">
+                                    <div class="track-icon">🚀</div>
+                                    <div>
+                                        <div class="track-title">서비스 론칭</div>
+                                        <div class="track-subtitle">배포, 운영, 사용자 지원</div>
+                                    </div>
+                                </div>
+                                <div class="track-timeline">
+                                    <div class="track-line"></div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">7</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 7월 15일</div>
+                                            <div class="milestone-title">1차 서비스 오픈</div>
+                                            <div class="milestone-description">기본 질의응답 및 멀티턴 대화 론칭</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">운영 환경 배포 및 모니터링</div>
+                                                <div class="milestone-item">사용자 온보딩 지원</div>
+                                                <div class="milestone-item">24/7 기술 지원 체계 구축</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">8</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 8월</div>
+                                            <div class="milestone-title">파일 분석 서비스 확장</div>
+                                            <div class="milestone-description">문서 업로드 및 분석 기능 서비스</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">파일 업로드 서비스 오픈</div>
+                                                <div class="milestone-item">사용자 교육 및 가이드 제공</div>
+                                                <div class="milestone-item">피드백 수집 및 개선</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">9</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 9월</div>
+                                            <div class="milestone-title">Mobile office 연계</div>
+                                            <div class="milestone-description">모바일 오피스 통합 서비스</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">모바일 앱 연동 서비스 론칭</div>
+                                                <div class="milestone-item">회의실 예약 서비스 통합</div>
+                                                <div class="milestone-item">마크다운 출력 서비스 제공</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">10</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 10월</div>
+                                            <div class="milestone-title">업무 자동화 확장</div>
+                                            <div class="milestone-description">배차 신청 및 전문 업무 지원</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">배차 신청 자동화 서비스</div>
+                                                <div class="milestone-item">위험성 평가 지원 서비스</div>
+                                                <div class="milestone-item">기술 교육 플랫폼 오픈</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">11</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 11월</div>
+                                            <div class="milestone-title">멀티미디어 서비스</div>
+                                            <div class="milestone-description">음성 및 이미지 멀티모달 서비스</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">음성 인식 서비스 오픈</div>
+                                                <div class="milestone-item">이미지 검색 서비스 제공</div>
+                                                <div class="milestone-item">회의록 요약 자동화 서비스</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="milestone">
+                                        <div class="milestone-marker">12</div>
+                                        <div class="milestone-content">
+                                            <div class="milestone-date">2025년 12월</div>
+                                            <div class="milestone-title">서비스 완성 최적화</div>
+                                            <div class="milestone-description">전체 서비스 통합 및 성능 최적화</div>
+                                            <div class="milestone-items">
+                                                <div class="milestone-item">레거시 시스템 완전 연동</div>
+                                                <div class="milestone-item">사용자 만족도 4.5/5.0 달성</div>
+                                                <div class="milestone-item">전체 서비스 안정화 완성</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × 주식회사 데이터스트림즈<br>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 프로그레스 바 애니메이션
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = width;
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+        });
+
+        // 드롭다운 토글 함수
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const dropdownFeature = dropdown.parentElement.querySelector('.dropdown-feature');
+            
+            if (dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+                dropdownFeature.classList.remove('active');
+            } else {
+                dropdown.classList.add('active');
+                dropdownFeature.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지능형 문서 검색 및 분석 시나리오</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .scenario-section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .query-box {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 6px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .query-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .query-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+        }
+        
+        .process-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .process-step {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .process-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .step-description {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .arrow {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid #667eea;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .system-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .system-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .system-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .system-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .system-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .tech-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .result-preview {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border-left: 6px solid #10b981;
+        }
+        
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-content {
+            color: #047857;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        
+        @media (max-width: 768px) {
+            .process-step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .systems-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">UC-1: 지능형 문서 검색 및 분석</h1>
+            <p class="subtitle">한국도로공사 ex-GPT 핵심 사용 사례</p>
+        </div>
+        
+        <!-- 시나리오 섹션 -->
+        <div class="scenario-section">
+            <h2 class="section-title">
+                <span class="icon">📋</span>
+                사용 시나리오
+            </h2>
+            
+            <div class="query-box">
+                <div class="query-text">
+                    💬 "<span class="highlight">최근 3년간 하이패스 관련 법령 변경사항</span>"
+                </div>
+            </div>
+            
+            <div class="process-flow">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">사용자 입력</div>
+                        <div class="step-description">정책담당자가 자연어로 질의 입력 - "최근 3년간 하이패스 관련 법령 변경사항"</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">
+                    <div class="arrow-down"></div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">의도 분석</div>
+                        <div class="step-description">LangGraph 라우팅을 통해 시계열 법령 분석 요청으로 분류 및 의도 파악</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">
+                    <div class="arrow-down"></div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">관련 문서 검색</div>
+                        <div class="step-description">Qdrant Vector DB에서 하이패스 관련 법령 문서를 시간순으로 검색</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">
+                    <div class="arrow-down"></div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">시계열 분석</div>
+                        <div class="step-description">2022년~2025년 기간 동안의 법령 변경사항을 시간순으로 정렬 및 분석</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">
+                    <div class="arrow-down"></div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <div class="step-title">변경사항 요약</div>
+                        <div class="step-description">LangChain 요약 체인을 통해 주요 변경사항을 구조화하여 요약 생성</div>
+                    </div>
+                </div>
+                
+                <div class="arrow">
+                    <div class="arrow-down"></div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <div class="step-title">결과 제시</div>
+                        <div class="step-description">시간순 변경사항과 출처를 포함한 상세 분석 결과를 사용자에게 제공</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 연계 시스템 섹션 -->
+        <div class="scenario-section">
+            <h2 class="section-title">
+                <span class="icon">🔗</span>
+                연계 시스템
+            </h2>
+            
+            <div class="systems-grid">
+                <div class="system-card">
+                    <div class="system-icon">⚖️</div>
+                    <div class="system-title">법령 데이터베이스</div>
+                    <div class="system-description">
+                        국가법령정보센터 API 연동을 통한 실시간 법령 정보 및 개정 이력 관리
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">REST API</span>
+                        <span class="tech-badge">실시간 연동</span>
+                        <span class="tech-badge">버전 관리</span>
+                    </div>
+                </div>
+                
+                <div class="system-card">
+                    <div class="system-icon">📊</div>
+                    <div class="system-title">정책 변경 이력 시스템</div>
+                    <div class="system-description">
+                        정책 변경사항의 시계열 추적 및 영향도 분석을 위한 이력 관리 시스템
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Timeline Analysis</span>
+                        <span class="tech-badge">Impact Tracking</span>
+                        <span class="tech-badge">Change Log</span>
+                    </div>
+                </div>
+                
+                <div class="system-card">
+                    <div class="system-icon">📁</div>
+                    <div class="system-title">문서 관리 시스템</div>
+                    <div class="system-description">
+                        내부 정책 문서, 지침서, 업무 매뉴얼 등의 통합 관리 및 검색 시스템
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Document Store</span>
+                        <span class="tech-badge">Metadata</span>
+                        <span class="tech-badge">Search Index</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 예상 결과 섹션 -->
+        <div class="result-preview">
+            <div class="result-title">
+                ✨ 예상 검색 결과
+            </div>
+            <div class="result-content">
+                <strong>📅 2022년 3월:</strong> 하이패스 요금 정산 방식 변경 (법령 제15조 개정)<br>
+                <strong>📅 2023년 8월:</strong> 하이패스 단말기 기술 기준 강화 (시행규칙 제7조 신설)<br>
+                <strong>📅 2024년 12월:</strong> 전기차 하이패스 할인 제도 도입 (법령 제23조의2 신설)<br>
+                <strong>📅 2025년 1월:</strong> 디지털 하이패스 시범 운영 관련 규정 제정<br><br>
+                💡 <strong>주요 변화:</strong> 디지털 전환 가속화, 친환경 정책 연계, 기술 기준 고도화
+            </div>
+        </div>
+    </div>
+</body>
+</html>

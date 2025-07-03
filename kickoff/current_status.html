@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. 현 학습데이터 현황 (AS-IS vs TO-BE) - ex-GPT 프로젝트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* 상단 유틸리티 바 */
+        .utility-bar {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1001;
+            height: 33px;
+            line-height: 1;
+        }
+
+        .utility-container {
+            width: 100%;
+            max-width: none;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* 메인 헤더 */
+        .main-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: fixed;
+            top: 33px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+
+        .header-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #1976d2;
+            border-bottom-color: #1976d2;
+        }
+
+        /* 드롭다운 메뉴 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -50px;
+            min-width: 400px;
+            background: #1976d2;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-content {
+            width: 100%;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .dropdown-section {
+            color: white;
+        }
+
+        .dropdown-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .dropdown-item {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 0.8rem 0;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+            margin-left: -0.5rem;
+        }
+
+        .dropdown-item:hover {
+            color: white;
+            text-decoration: none;
+            border-left-color: white;
+            background: rgba(255,255,255,0.1);
+            padding-left: 1rem;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* AS-IS TO-BE 비교 컨테이너 */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .asis-header {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+        }
+
+        .tobe-header {
+            background: linear-gradient(135deg, #28a745, #2ecc71);
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        /* 데이터 카테고리 */
+        .data-category {
+            margin-bottom: 2.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .category-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        .category-content {
+            background: white;
+            padding: 1.5rem;
+        }
+
+        /* 메트릭 카드 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .metric-value.warning {
+            color: #ffc107;
+        }
+
+        .metric-value.success {
+            color: #28a745;
+        }
+
+        /* 리스트 스타일 */
+        .data-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .data-item {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #1976d2;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .data-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .data-item.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .data-item.critical {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .data-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        /* 프로세스 플로우 */
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .process-step {
+            text-align: center;
+            flex: 1;
+            padding: 0.5rem;
+        }
+
+        .process-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1976d2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+        }
+
+        .process-step-text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .process-arrow {
+            color: #1976d2;
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+        }
+
+        /* 알림 */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        /* 진행률 바 */
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1976d2;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .progress-fill.warning {
+            background: #ffc107;
+        }
+
+        .progress-fill.success {
+            background: #28a745;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info {
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        /* 백 버튼 */
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .utility-container, .header-container, .content-container, .footer-container {
+                padding: 0 2rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="main_index.html">
+                    <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏛️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link active">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+ 
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">4. 학습데이터 현황</h1>
+                <p class="page-subtitle">AS-IS vs TO-BE 비교 분석</p>
+            </div>    
+    <!-- ex-GPT 시스템 데이터 처리 흐름도 -->
+    <div class="data-flow-section" style="background: white; margin: 2rem 4rem; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <h2 style="text-align: center; color: #1976d2; margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700;">📊 ex-GPT 학습데이터 처리 흐름도</h2>
+        <div class="mermaid" style="text-align: center;">
+            graph LR
+                %% 학습 데이터 입력 단계
+                A1[📄 법령규정 데이터] --> B1{데이터 정제<br/>및 중복제거}
+                A2[📊 국정감사 자료] --> B1
+                A3[📋 R&D 보고서] --> B1
+                A4[📰 정책 자료] --> B1
+                A5[🎤 음성 파일] --> B2{Whisper-Large-v3<br/>STT 변환}
+                A6[🖼️ 이미지/도면] --> B3{Florence-2-Large<br/>비전 처리}
+
+                %% 전처리 단계
+                B1 --> C1[텍스트 파싱<br/>및 구조화]
+                B2 --> C1
+                B3 --> C1
+
+                %% 품질 검증 단계
+                C1 --> D1{개인정보<br/>검출 시스템}
+                D1 --> D2{중복 파일<br/>검증}
+                D2 --> D3{Human in the Loop<br/>품질 검증}
+
+                %% 벡터화 및 저장
+                D3 --> E1[Qdrant<br/>벡터 데이터베이스]
+                E1 --> E2[메타데이터<br/>자동 추출]
+
+                %% 사용자 질의 처리
+                F1[👤 사용자 질의] --> G1{LangGraph<br/>라우팅 시스템}
+                
+                %% 권한 검증
+                G1 --> H1{권한 체계<br/>검증}
+                H1 --> H2[개인화된<br/>데이터 접근]
+
+                %% 질의 유형별 처리
+                H2 --> I1{질의 유형<br/>분석}
+                I1 --> J1[📝 일반 LLM<br/>QWen3-235B/Llama4 Maverick/Minimax-m1 등]
+                I1 --> J2[🔍 RAG 검색<br/>벡터 유사도 기반]
+                I1 --> J3[🔧 MCP 도구<br/>회의실/배차 신청]
+                I1 --> J4[🖼️ 이미지 검색<br/>Florence-2 기반]
+                I1 --> J5[🎤 음성 처리<br/>Whisper STT]
+
+                %% 답변 생성 및 출력
+                J1 --> K1[답변 생성<br/>및 검증]
+                J2 --> K1
+                J3 --> K1
+                J4 --> K1
+                J5 --> K1
+
+                K1 --> L1[📊 마크다운<br/>형식 출력]
+                L1 --> L2[📥 파일 다운로드<br/>콘텐츠 프리뷰]
+
+                %% 시스템 모니터링
+                E1 --> M1[📈 시스템 성능<br/>모니터링]
+                K1 --> M1
+                M1 --> M2[월별 품질<br/>점검 보고서]
+
+                %% 스타일링
+                classDef inputData fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                classDef processing fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                classDef userFlow fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                classDef output fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+
+                class A1,A2,A3,A4,A5,A6 inputData
+                class B1,B2,B3,C1,D1,D2,D3 processing
+                class E1,E2 storage
+                class F1,G1,H1,H2,I1,J1,J2,J3,J4,J5,K1 userFlow
+                class L1,L2,M1,M2 output
+        </div>
+        <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
+            <h3 style="color: #1976d2; margin-bottom: 1rem;">🔧 핵심 기술 스택</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong>🧠 AI 모델</strong><br/>
+                    • QWen3-235B-A22B<br/>
+                    • Llama4-Maverick 400B<br/>
+                    • MiniMax-M1 456B
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong>🔍 멀티모달</strong><br/>
+                    • Florence-2-Large 0.77B<br/>
+                    • Whisper-Large-v3<br/>
+                    • Qdrant 벡터 DB
+                </div>
+                <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong>🛠️ 개발 환경</strong><br/>
+                    • LangGraph 라우팅<br/>
+                    • Poetry 환경 관리<br/>
+                    • H100 GPU 클러스터
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+
+
+
+            <div class="comparison-container">
+                <!-- AS-IS 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header asis-header">
+                        🔍 AS-IS (현재 상황)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 기본 시스템 현황 -->
+                        <div class="data-category">
+                            <div class="category-header">기본 시스템 현황</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">Llama3-70B</div>
+                                        <div class="metric-label">기존 LLM 모델</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">단발성</div>
+                                        <div class="metric-label">대화 모드</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">기본</div>
+                                        <div class="metric-label">RAG 시스템</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">미비</div>
+                                        <div class="metric-label">권한 체계</div>
+                                    </div>
+                                </div>
+                                
+                                <ul class="data-list">
+                                    <li class="data-item critical">Single-Turn 대화만 지원 (사용자 불만 급증)</li>
+                                    <li class="data-item warning">구형 Llama3-70B 모델 사용</li>
+                                    <li class="data-item warning">기본 보안 시스템만 적용</li>
+                                    <li class="data-item critical">권한 관리 체계 미연동</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 학습 데이터 현황 -->
+                        <div class="data-category">
+                            <div class="category-header">학습 데이터 현황</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value">2,196</div>
+                                        <div class="metric-label">기존 문서 수</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">제한적</div>
+                                        <div class="metric-label">데이터 범위</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">수동</div>
+                                        <div class="metric-label">업데이트 방식</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">텍스트만</div>
+                                        <div class="metric-label">지원 형식</div>
+                                    </div>
+                                </div>
+
+                                <div class="process-flow">
+                                    <div class="process-step">
+                                        <div class="process-step-icon">1</div>
+                                        <div class="process-step-text">원본 수집</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">2</div>
+                                        <div class="process-step-text">수동 전처리</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">3</div>
+                                        <div class="process-step-text">벡터화</div>
+                                    </div>
+                                </div>
+
+                                <ul class="data-list">
+                                    <li class="data-item">법령규정 데이터 (기본 범위)</li>
+                                    <li class="data-item">국정감사 자료 (제한적 범위)</li>
+                                    <li class="data-item warning">R&D 보고서 (일부만 포함)</li>
+                                    <li class="data-item critical">멀티모달 데이터 미지원</li>
+                                    <li class="data-item warning">수동 업데이트로 인한 지연</li>
+                                </ul>
+
+                                <div class="alert alert-warning">
+                                    <strong>주요 제약사항:</strong> 텍스트 기반 데이터만 처리 가능, 이미지·도면·음성 데이터 미지원
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성능 및 제약사항 -->
+                        <div class="data-category">
+                            <div class="category-header">성능 및 제약사항</div>
+                            <div class="category-content">
+                                <ul class="data-list">
+                                    <li class="data-item critical">개인정보 검출 시스템 미비</li>
+                                    <li class="data-item warning">데이터 품질 검증 체계 부족</li>
+                                    <li class="data-item warning">실시간 업데이트 불가</li>
+                                    <li class="data-item critical">중복 데이터 관리 체계 미흡</li>
+                                    <li class="data-item warning">메타데이터 자동 추출 미지원</li>
+                                </ul>
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 65%"></div>
+                                </div>
+                                <p style="text-align: center; margin-top: 0.5rem; color: #856404; font-size: 0.9rem;">
+                                    데이터 활용 효율성: 65%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TO-BE 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header tobe-header">
+                        🚀 TO-BE (목표 시스템)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 고도화된 시스템 -->
+                        <div class="data-category">
+                            <div class="category-header">고도화된 시스템</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value success">Llama4</div>
+                                        <div class="metric-label">등 최신 LLM 모델 적용</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">멀티턴</div>
+                                        <div class="metric-label">대화 모드</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">고도화</div>
+                                        <div class="metric-label">RAG 시스템</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">완비</div>
+                                        <div class="metric-label">권한 체계</div>
+                                    </div>
+                                </div>
+                                
+                                <ul class="data-list">
+                                    <li class="data-item success">LangGraph 기반 멀티턴 대화 지원</li>
+                                    <li class="data-item success">QWen3-235B, MiniMax-M1(456B), Llama4-Maverick(400B) 등 최신 LLM</li>
+                                    <li class="data-item success">공공기관 수준 보안 시스템 완비</li>
+                                    <li class="data-item success">신규 권한 체계 및 개인화 서비스</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 확장된 학습 데이터 -->
+                        <div class="data-category">
+                            <div class="category-header">확장된 학습 데이터</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value success">35,000+</div>
+                                        <div class="metric-label">목표 학습 데이터 수</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">전면</div>
+                                        <div class="metric-label">데이터 범위</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">혼합형</div>
+                                        <div class="metric-label">업데이트 방식</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">멀티모달</div>
+                                        <div class="metric-label">지원 형식</div>
+                                    </div>
+                                </div>
+
+                                <div class="process-flow">
+                                    <div class="process-step">
+                                        <div class="process-step-icon">1</div>
+                                        <div class="process-step-text">원본 수집</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">2</div>
+                                        <div class="process-step-text">AI 전처리</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">3</div>
+                                        <div class="process-step-text">품질 검증</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">4</div>
+                                        <div class="process-step-text">벡터화</div>
+                                    </div>
+                                </div>
+
+                                <ul class="data-list">
+                                    <li class="data-item success">법령규정 + 최신 개정안 자동 반영</li>
+                                    <li class="data-item success">국정감사 + 전체 정책 자료 통합</li>
+                                    <li class="data-item success">R&D 보고서 + 기술 문서 전체 포함</li>
+                                    <li class="data-item success">Florence-2-Large (0.77B) 비전-언어 통합 모델 / Whisper-Large-v3 다국어 음성 인식 시스템 </li>
+                                    <li class="data-item success">입력 데이터에 따른 혼합형 데이터 업데이트 시스템</li>
+                                </ul>
+
+                                <div class="alert alert-success">
+                                    <strong>핵심 혁신:</strong> 텍스트·이미지·음성 멀티모달 통합 처리, 입력 데이터 기반 혼합형 데이터 파이프라인<br>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성능 및 품질 관리 -->
+                        <div class="data-category">
+                            <div class="category-header">성능 및 품질 관리</div>
+                            <div class="category-content">
+                                <ul class="data-list">
+                                    <li class="data-item success">월별 개인정보 자동 검출 및 점검</li>
+                                    <li class="data-item success">Human in the Loop 품질 검증 체계</li>
+                                    <li class="data-item success">Qdrant 기반 분산 벡터 업데이트</li>
+                                    <li class="data-item success">중복 제거 및 버전 관리 자동화</li>
+                                    <li class="data-item success">멀티모달 메타데이터 자동 추출</li>
+                                </ul>
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill success" style="width: 95%"></div>
+                                </div>
+                                <p style="text-align: center; margin-top: 0.5rem; color: #155724; font-size: 0.9rem;">
+                                    데이터 활용 효율성: 95%
+                                </p>
+
+                                <div class="alert alert-info">
+                                    <strong>7월 15일 오픈 목표:</strong> 기존 데이터 품질 개선, 신규 데이터 소스 통합, 최신 LLM 모델 적용
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × 주식회사 데이터스트림즈<br>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 프로그레스 바 애니메이션
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = width;
+                        }, 500);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+
+            // 카드 애니메이션
+            const cards = document.querySelectorAll('.data-category');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. ex-GPT 기능 고도화 방안 (AS-IS vs TO-BE) - ex-GPT 프로젝트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* 상단 유틸리티 바 */
+        .utility-bar {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1001;
+            height: 33px;
+            line-height: 1;
+        }
+
+        .utility-container {
+            width: 100%;
+            max-width: none;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* 메인 헤더 */
+        .main-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: fixed;
+            top: 33px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+
+        .header-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #1976d2;
+            border-bottom-color: #1976d2;
+        }
+
+        /* 드롭다운 메뉴 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -50px;
+            min-width: 400px;
+            background: #1976d2;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-content {
+            width: 100%;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .dropdown-section {
+            color: white;
+        }
+
+        .dropdown-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .dropdown-item {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 0.8rem 0;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+            margin-left: -0.5rem;
+        }
+
+        .dropdown-item:hover {
+            color: white;
+            text-decoration: none;
+            border-left-color: white;
+            background: rgba(255,255,255,0.1);
+            padding-left: 1rem;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* AS-IS TO-BE 비교 컨테이너 */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .asis-header {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+        }
+
+        .tobe-header {
+            background: linear-gradient(135deg, #28a745, #2ecc71);
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        /* 기능 카테고리 */
+        .function-category {
+            margin-bottom: 2.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .category-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        .category-content {
+            background: white;
+            padding: 1.5rem;
+        }
+
+        /* 기능 리스트 */
+        .function-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .function-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+            transition: all 0.3s ease;
+        }
+
+        .function-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .function-item.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .function-item.critical {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .function-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .function-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .function-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* 기능 비교 표 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-basic {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-advanced {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* 타임라인 */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #1976d2, #42a5f5, #1976d2);
+            border-radius: 1.5px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.7rem;
+            top: 0.5rem;
+            width: 1.4rem;
+            height: 1.4rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.2);
+        }
+
+        .timeline-date {
+            color: #1976d2;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* 알림 */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        /* 메트릭 카드 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .metric-value.warning {
+            color: #ffc107;
+        }
+
+        .metric-value.success {
+            color: #28a745;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info {
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        /* 백 버튼 */
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 아키텍처 섹션 */
+        .architecture-section {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            overflow: visible;
+        }
+
+        .section-title-main {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-icon-main {
+            font-size: 2.5rem;
+        }
+
+        .mermaid-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+            overflow-y: visible;
+            min-height: 800px;
+            padding-bottom: 80px;
+        }
+
+        .mermaid {
+            text-align: center;
+            min-height: 700px;
+            width: 100%;
+        }
+
+        /* Mermaid 다이어그램 호버 효과 */
+        .mermaid .node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mermaid .node:hover {
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+        }
+
+        .mermaid .node rect {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .node:hover rect {
+            stroke-width: 3px;
+            stroke: #1976d2;
+        }
+
+        .mermaid .node text {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .node:hover text {
+            font-weight: bold;
+            fill: #1976d2;
+        }
+
+        /* 서브그래프 호버 효과 */
+        .mermaid .cluster {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .cluster:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+
+        .mermaid .cluster rect {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .cluster:hover rect {
+            stroke-width: 2px;
+            stroke: #1976d2;
+        }
+
+        /* 엣지 호버 효과 */
+        .mermaid .edgePath {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .edgePath:hover {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .mermaid .edgePath path {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .edgePath:hover path {
+            stroke-width: 3px;
+            stroke: #1976d2;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .utility-container, .header-container, .content-container, .footer-container {
+                padding: 0 2rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+            }
+
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .architecture-section {
+                padding: 2rem 1rem;
+            }
+
+            .section-title-main {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="main_index.html">
+                    <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏛️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link active">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">5. ex-GPT 기능 고도화 방안</h1>
+                <p class="page-subtitle">AS-IS vs TO-BE 기능 비교 분석</p>
+            </div>
+    <!-- 메인 콘텐츠 -->
+
+            <!-- ex-GPT 아키텍처 다이어그램 -->
+            <div class="architecture-section" id="architecture">
+                <h2 class="section-title-main">
+                    <span class="section-icon-main">🏗️</span>
+                    ex-GPT 시스템 아키텍처
+                </h2>
+                <div class="mermaid-container">
+                    <div class="mermaid">
+                        %%{init: {'themeVariables': { 'height': '1200px'}}}%%
+                        flowchart LR
+                            subgraph "사용자 인터페이스"
+                                A["웹 브라우저"]
+                                B["ex-GPT 포털"]
+                                C["모바일 앱"]
+                            end
+                            subgraph "AI 처리 계층"
+                                D["LangGraph 라우팅"]
+                                E["최신 LLM(Llama4 등)"]
+                                F["RAG 검색"]
+                                G["MCP 도구"]
+                                H1["Florence-2 Vision"]
+                                H2["Whisper STT"]
+                            end
+                            subgraph "데이터 계층"
+                                H["Qdrant Vector DB"]
+                                I["개인정보 검출 엔진"]
+                                J["외부 시스템 API"]
+                                K1["이미지 인덱스"]
+                                K2["음성 전사 DB"]
+                            end
+                            subgraph "하드웨어 인프라"
+                                K["GPU Cluster"]
+                                L["SSD 스토리지"]
+                            end
+                            A --> B
+                            C --> B
+                            B --> D
+                            D --> E
+                            D --> F
+                            D --> G
+                            D --> H1
+                            D --> H2
+                            F --> H
+                            H1 --> K1
+                            H2 --> K2
+                            K1 --> H
+                            K2 --> H
+                            E --> I
+                            E --> K
+                            H1 --> K
+                            H2 --> K
+                            G --> J
+                            H --> L
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
+                        <h3 style="color: #1976d2; margin-bottom: 1rem;">🎯 핵심 고도화 요소</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                            <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <strong>🧠 지능형 라우팅</strong><br/>
+                                • LangGraph 기반 멀티턴 대화<br/>
+                                • 컨텍스트 메모리 관리<br/>
+                                • 질의 유형별 최적 경로 선택
+                            </div>
+                            <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <strong>⚙️ MCP 업무 자동화</strong><br/>
+                                • 회의실 예약 + 회의록 자동 작성<br/>
+                                • 배차 신청 시스템 연동<br/>
+                                • 하이포털 API 통합
+                            </div>
+                            <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <strong>🎤 멀티모달 처리</strong><br/>
+                                • Florence-2 이미지/도면 분석<br/>
+                                • Whisper STT 음성 처리<br/>
+                                • 통합 검색 및 인덱싱
+                            </div>
+                            <div style="background: white; padding: 1rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                                <strong>🔐 보안 및 권한</strong><br/>
+                                • 신규 권한 체계 구축<br/>
+                                • 개인화 서비스 제공<br/>
+                                • 개인정보 자동 검출
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+
+
+
+            
+            
+            <div class="comparison-container">
+                <!-- AS-IS 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header asis-header">
+                        🔍 AS-IS (현재 기능)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 대화 기능 -->
+                        <div class="function-category">
+                            <div class="category-header">대화 및 상호작용</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item critical">
+                                        <div class="function-title">단발성 대화만 지원</div>
+                                        <div class="function-desc">Single-Turn 방식으로 연속적인 대화 불가, 사용자 불만 급증</div>
+                                    </li>
+                                    <li class="function-item warning">
+                                        <div class="function-title">기본 질의응답</div>
+                                        <div class="function-desc">간단한 검색 기반 답변만 제공, 복잡한 추론 한계</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">컨텍스트 메모리 없음</div>
+                                        <div class="function-desc">이전 대화 내용을 기억하지 못해 업무 연속성 부족</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 핵심 기능 -->
+                        <div class="function-category">
+                            <div class="category-header">핵심 기능</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item">
+                                        <div class="function-title">번역 서비스</div>
+                                        <div class="function-desc">한영 번역 기능, 사용자 만족도 높음</div>
+                                    </li>
+                                    <li class="function-item">
+                                        <div class="function-title">나만의 AI (기본)</div>
+                                        <div class="function-desc">개인 문서 업로드 및 기본 분석</div>
+                                    </li>
+                                    <li class="function-item warning">
+                                        <div class="function-title">문서 요약 (제한적)</div>
+                                        <div class="function-desc">기본 템플릿만 제공, 맞춤형 요약 불가</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">권한 관리 미비</div>
+                                        <div class="function-desc">신규 권한 체계 미구현, 개인화 서비스 불가</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 시스템 연동 -->
+                        <div class="function-category">
+                            <div class="category-header">시스템 연동 및 자동화</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item critical">
+                                        <div class="function-title">MCP 연동 없음</div>
+                                        <div class="function-desc">하이포털, 모바일오피스 등 레거시 시스템 연동 불가</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">회의실 예약 불가</div>
+                                        <div class="function-desc">외부 시스템 연동 기능 전무</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">배차 신청 불가</div>
+                                        <div class="function-desc">업무 자동화 기능 미구현</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">회의록 자동 작성 불가</div>
+                                        <div class="function-desc">STT 기능 미지원</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 멀티모달 및 고급 기능 -->
+                        <div class="function-category">
+                            <div class="category-header">멀티모달 및 고급 기능</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item critical">
+                                        <div class="function-title">이미지/도면 처리 불가</div>
+                                        <div class="function-desc">텍스트 데이터만 처리 가능</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">음성 인식 미지원</div>
+                                        <div class="function-desc">Whisper STT 기능 없음</div>
+                                    </li>
+                                    <li class="function-item critical">
+                                        <div class="function-title">문서 비교 기능 없음</div>
+                                        <div class="function-desc">업로드 문서 간 비교 분석 불가</div>
+                                    </li>
+                                    <li class="function-item warning">
+                                        <div class="function-title">제한적 검색 기능</div>
+                                        <div class="function-desc">기본 벡터 검색만 지원</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TO-BE 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header tobe-header">
+                        🚀 TO-BE (목표 기능)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 고도화된 대화 기능 -->
+                        <div class="function-category">
+                            <div class="category-header">고도화된 대화 및 상호작용</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item success">
+                                        <div class="function-title">멀티턴 대화</div>
+                                        <div class="function-desc">QWen3-235B, MiniMax-M1(456B), Llama4등 최신 LLM으로 연속적인 대화 지원, 복잡한 업무 요청 처리 가능</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">지능형 라우팅</div>
+                                        <div class="function-desc">질의 유형에 따른 최적 처리 경로 자동 선택</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">컨텍스트 메모리 관리</div>
+                                        <div class="function-desc">대화 히스토리 유지, 업무 연속성 보장</div>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 확장된 핵심 기능 -->
+                        <div class="function-category">
+                            <div class="category-header">확장된 핵심 기능</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item success">
+                                        <div class="function-title">고급 번역 및 다국어 지원</div>
+                                        <div class="function-desc">한영 자동 번역 + 다양한 언어 지원</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">개인화된 나만의 AI</div>
+                                        <div class="function-desc">개인별 권한 체계 기반 맞춤형 서비스</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">지능형 문서 요약</div>
+                                        <div class="function-desc">맞춤형 프롬프트, 용도별 요약 템플릿</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">고급 문서 비교 분석</div>
+                                        <div class="function-desc">업로드 문서 간 차이점 분석 및 트렌드 파악</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- MCP 기반 시스템 연동 -->
+                        <div class="function-category">
+                            <div class="category-header">MCP 기반 시스템 연동 및 자동화</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item success">
+                                        <div class="function-title">MCP 연동</div>
+                                        <div class="function-desc">검색 기능 위주에서 실행 위주로 변경</div>
+                                    </li>
+                                </li>
+                                <li class="function-item success">
+                                    <div class="function-title">회의실 예약</div>
+                                    <div class="function-desc">"내일 오후 2시 중회의실 예약해줘" 자연어 명령 처리</div>
+                                </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">배차 시스템 연동</div>
+                                        <div class="function-desc">출장 목적지 기반 최적 차량 자동 매칭 및 신청</div>
+
+                                    <li class="function-item success">
+                                        <div class="function-title">Whisper 기반 회의록 자동 작성</div>
+                                        <div class="function-desc">음성 → 텍스트 → 요약 → 메일 전송 자동화</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 멀티모달 및 AI 고도화 -->
+                        <div class="function-category">
+                            <div class="category-header">멀티모달 및 AI 고도화</div>
+                            <div class="category-content">
+                                <ul class="function-list">
+                                    <li class="function-item success">
+                                        <div class="function-title">Florence-2-Large 기반 비전 처리</div>
+                                        <div class="function-desc">Microsoft의 0.77B 매개변수 통합 비전 모델 - 도면, 설계도 이미지 분석, 캡션 생성, 객체 탐지, OCR 지원</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">영상/사진 검색</div>
+                                        <div class="function-desc">이미지 콘텐츠 기반 통합 검색 시스템</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">Whisper-Large-v3 기반 음성 처리</div>
+                                        <div class="function-desc">OpenAI의 최신 다국어 음성 인식 모델 - 128 Mel 주파수 빈, 1백만 시간 학습 데이터</div>
+                                    </li>
+                                    <li class="function-item success">
+                                        <div class="function-title">고급 문서 검색</div>
+                                        <div class="function-desc">"최근 3년간 하이패스 관련 법령 변경사항" 시계열 분석 및 마크다운 출력 지원</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 기능 비교 요약표 -->
+            <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 3rem;">
+                <h3 style="text-align: center; margin-bottom: 2rem; color: #1976d2;">핵심 기능 비교 요약</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>기능 영역</th>
+                            <th>AS-IS (현재)</th>
+                            <th>TO-BE (목표)</th>
+                            <th>구현 시기</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>대화 방식</td>
+                            <td><span class="status-missing">Single-Turn</span></td>
+                            <td><span class="status-advanced">Multi-Turn</span></td>
+                            <td>7월 15일</td>
+                        </tr>
+                        <tr>
+                            <td>문서 처리</td>
+                            <td><span class="status-basic">기본 요약</span></td>
+                            <td><span class="status-advanced">지능형 분석+비교</span></td>
+                            <td>8월</td>
+                        </tr>
+                        <tr>
+                            <td>시스템 연동</td>
+                            <td><span class="status-missing">연동 없음</span></td>
+                            <td><span class="status-advanced">MCP 기반 연동</span></td>
+                            <td>9월</td>
+                        </tr>
+                        <tr>
+                            <td>회의록 작성</td>
+                            <td><span class="status-missing">미지원</span></td>
+                            <td><span class="status-advanced">STT 자동 작성/회의실 예약 자동화</span></td>
+                            <td>9월</td>
+                        </tr>
+                        <tr>
+                            <td>업무 자동화</td>
+                            <td><span class="status-missing">수동 처리</span></td>
+                            <td><span class="status-advanced">배차 자동화</span></td>
+                            <td>10월</td>
+                        </tr>
+                        <tr>
+                            <td>멀티모달</td>
+                            <td><span class="status-missing">텍스트만</span></td>
+                            <td><span class="status-advanced">이미지+음성+텍스트</span></td>
+                            <td>11월</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                <strong>단계별 오픈 전략:</strong> 7월 15일 Qwen3-235B-A22B 기반 MVP로 시작, 11월까지 Florence-2 + Whisper-v3 멀티모달 완성<br>
+                    <strong>기술 사양:</strong> 최신 LLM 사용(Llama4-400B, MiniMax-M1 456B 등), 하이브리드 MoE 구조, 라이팅 어텐션 (DeepSeek-R1 대비 25% 적은 FLOPs)
+                                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × 주식회사 데이터스트림즈<br>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <!-- Mermaid 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <script>
+        // Mermaid 초기화
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 카드 애니메이션
+            const cards = document.querySelectorAll('.function-category');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+
+            // 테이블 행 호버 효과
+            const tableRows = document.querySelectorAll('.comparison-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Mermaid 다이어그램 호버 효과 강화
+            setTimeout(() => {
+                const mermaidNodes = document.querySelectorAll('.mermaid .node');
+                mermaidNodes.forEach(node => {
+                    node.addEventListener('mouseenter', function() {
+                        this.style.zIndex = '10';
+                        this.style.position = 'relative';
+                    });
+                    
+                    node.addEventListener('mouseleave', function() {
+                        this.style.zIndex = '';
+                        this.style.position = '';
+                    });
+                });
+
+                // 서브그래프 호버 효과
+                const clusters = document.querySelectorAll('.mermaid .cluster');
+                clusters.forEach(cluster => {
+                    cluster.addEventListener('mouseenter', function() {
+                        this.style.zIndex = '5';
+                        this.style.position = 'relative';
+                    });
+                    
+                    cluster.addEventListener('mouseleave', function() {
+                        this.style.zIndex = '';
+                        this.style.position = '';
+                    });
+                });
+            }, 1000); // Mermaid 렌더링 완료 후 실행
+        });
+    </script>
+</body>
+</html>

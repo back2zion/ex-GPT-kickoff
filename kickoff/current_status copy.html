@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. 현 학습데이터 및 기능 현황 - ex-GPT 프로젝트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+        }
+
+        /* 상단 유틸리티 바 */
+        .utility-bar {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            z-index: 1001;
+            height: 33px;
+            line-height: 1;
+        }
+
+        .utility-container {
+            width: 100%;
+            max-width: none;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .utility-bar a {
+            color: white;
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+
+        .utility-bar a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 메인 헤더 */
+        .main-header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: fixed;
+            top: 33px; /* 유틸리티 바 높이만큼 조정 */
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+
+        .header-container {
+            width: 100%;
+            padding: 0 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 35px;
+            width: auto;
+        }
+
+        /* 메인 네비게이션 */
+        .main-nav {
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 1.5rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: #1976d2;
+            border-bottom-color: #1976d2;
+        }
+
+        /* 드롭다운 메뉴 - 위치 및 크기 개선 */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: -50px; /* 중앙 정렬을 위한 음수 오프셋 */
+            min-width: 600px; /* 최소 너비 설정 */
+            background: #1976d2;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 2000; /* z-index 값 증가 */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* 호버 시 드롭다운 표시 개선 */
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* 드롭다운 콘텐츠 영역 개선 */
+        .dropdown-content {
+            width: 100%;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            max-width: none; /* 최대 너비 제한 제거 */
+            margin: 0;
+        }
+
+        .dropdown-section {
+            color: white;
+        }
+
+        .dropdown-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-item {
+            display: block;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 0.8rem 0;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            padding-left: 0.5rem;
+            margin-left: -0.5rem;
+        }
+
+        .dropdown-item:hover {
+            color: white;
+            text-decoration: none;
+            border-left-color: white;
+            background: rgba(255,255,255,0.1);
+            padding-left: 1rem;
+        }
+
+        /* 드롭다운 메뉴 호버 영역 확장 */
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: transparent;
+            z-index: 1500;
+        }
+
+        /* 메인 콘텐츠 - 헤더 높이 조정 */
+        .main-content {
+            margin-top: 113px; /* 유틸리티 바 + 헤더 높이 */
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .content-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        /* 브레드크럼 */
+
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* 탭 스타일 */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .tab.active {
+            color: #1976d2;
+            border-bottom-color: #1976d2;
+            background: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* 컨텐츠 그리드 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-top: 4px solid #1976d2;
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        /* 메트릭 그리드 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        /* 특징 리스트 */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #1976d2;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .feature-item.critical {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .feature-item.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1976d2;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .progress-fill.warning {
+            background: #ffc107;
+        }
+
+        .progress-fill.critical {
+            background: #dc3545;
+        }
+
+        /* 알림 */
+        .alert-critical {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: #721c24;
+        }
+
+        .alert-critical strong {
+            color: #491217;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: #856404;
+        }
+
+        .alert-warning strong {
+            color: #533f03;
+        }
+
+        .alert-warning ul, .alert-critical ul {
+            margin-top: 1rem;
+            margin-bottom: 0;
+            list-style: none;
+            padding-left: 1rem;
+        }
+
+        .alert-warning li, .alert-critical li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .alert-warning li::before {
+            content: '•';
+            position: absolute;
+            left: -1rem;
+            color: #533f03;
+        }
+
+        .alert-critical li::before {
+            content: '•';
+            position: absolute;
+            left: -1rem;
+            color: #491217;
+        }
+
+        /* 푸터 */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-info {
+            opacity: 0.8;
+            line-height: 1.8;
+        }
+
+        /* 백 버튼 */
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 반응형 디자인 개선 */
+        @media (max-width: 1200px) {
+            .dropdown-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            
+            .dropdown-menu {
+                left: -100px;
+                min-width: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                display: none;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .utility-container, .header-container, .content-container, .footer-container {
+                padding: 0 2rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="main_index.html">
+                    <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏛️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                                <a href="interview_results.html#interview-overview" class="dropdown-item">📋 전체 인터뷰 현황 (34개 부서)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link active">4. 현 학습데이터 및 기능</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🖥️ 시스템 현황</div>
+                                <a href="current_status.html#current-functions" class="dropdown-item">⚙️ 구현된 기능</a>
+                                <a href="current_status.html#performance" class="dropdown-item">📊 성능 현황</a>
+                                <a href="current_status.html#limitations" class="dropdown-item">⚠️ 제한사항</a>
+                                <a href="current_status.html#data-status" class="dropdown-item">📚 데이터 현황</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. ex-GPT 고도화 방안</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🚀 고도화 방안</div>
+                                <a href="enhancement_plan.html#architecture" class="dropdown-item">🏗️ ex-GPT 시스템 아키텍처</a>
+                                <a href="enhancement_plan.html#target-system" class="dropdown-item">🎯 목표 시스템</a>
+                                <a href="enhancement_plan.html#use-cases" class="dropdown-item">💼 서비스 Use-Case</a>
+                                <a href="enhancement_plan.html#learning-data" class="dropdown-item">📖 학습 데이터</a>
+                                <a href="enhancement_plan.html#user-management" class="dropdown-item">👤 사용자 관리</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+
+
+            <div class="page-header">
+                <h1 class="page-title">4. 현 학습데이터 및 기능 현황</h1>
+                <p class="page-subtitle">기존 시스템 분석 및 성능 평가</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="current-functions">⚙️ 구현된 기능</button>
+                <button class="tab" data-tab="performance">📊 성능 현황</button>
+                <button class="tab" data-tab="limitations">⚠️ 제한사항</button>
+                <button class="tab" data-tab="data-status">📚 데이터 현황</button>
+            </div>
+
+            <div id="current-functions" class="tab-content active">
+                <div class="content-grid">
+                    <div class="info-card">
+                        <h3 class="card-title">기본 기능 현황</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">접근 로그 관리</div>
+                                <div class="feature-desc">모든 사용자 활동 기록 및 감사 시스템 구축 완료</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">기본 보안 시스템</div>
+                                <div class="feature-desc">공공기관 수준의 기본 보안 체계 적용 (추가 보안 강화 필요)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 75%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">기본 RAG 시스템</div>
+                                <div class="feature-desc">라마 3 70B 모델 기반 질의응답 (최신 LLM(Qwen3-235B, Minimax-m1, Llama4-Maverick 등) 전환 준비완료)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 80%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item critical">
+                                <div class="feature-title">단발성 대화 모드</div>
+                                <div class="feature-desc">현재 Single Turn 대화만 지원 (멀티턴 대화 요구 증가로 사용자 불만 급증)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill critical" style="width: 40%"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3 class="card-title">특화 기능</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">번역 서비스</div>
+                                <div class="feature-desc">사용자 만족도 높음 (번역 품질 우수, 지속적 활용)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">나만의 AI (파일 업로드)</div>
+                                <div class="feature-desc">개인 문서 업로드 및 분석 기능 구현 완료</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">문서 요약 기능</div>
+                                <div class="feature-desc">기본 템플릿 제공 (맞춤형 프롬프트 개발 필요)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 60%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">지능형 검색</div>
+                                <div class="feature-desc">벡터 기반 유사도 검색 (정확도 개선 필요)</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 70%"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="performance" class="tab-content">
+                <div class="content-grid">
+                    <div class="info-card">
+                        <h3 class="card-title">하드웨어 현황</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">8대</div>
+                                <div class="metric-label">H100 GPU</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">1대</div>
+                                <div class="metric-label">물리서버</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">최신</div>
+                                <div class="metric-label">드라이버 지원</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">준비완료</div>
+                                <div class="metric-label">최신 LLM 지원</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3 class="card-title">시스템 목표 성능</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">99%+</div>
+                                <div class="metric-label">목표 가동률</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">2천+</div>
+                                <div class="metric-label">처리 대상 문서</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">4천+</div>
+                                <div class="metric-label">예상 일일 사용자</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">85%+</div>
+                                <div class="metric-label">목표 질의 성공률</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="limitations" class="tab-content">
+                <div class="content-grid">
+                    <div class="info-card">
+                        <h3 class="card-title">기술적 제약</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item warning">
+                                <div class="feature-title">물리 서버 제약</div>
+                                <div class="feature-desc">H100 8장이 하나의 물리 서버에 설치 (개별 GPU 관리 및 유지보수 체계 최적화 필요)</div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">멀티모달 미지원</div>
+                                <div class="feature-desc">이미지, 도면 처리 불가 (추후 개발 필요)</div>
+                            </li>
+                            <li class="feature-item critical">
+                                <div class="feature-title">개인정보 검출 시스템 미비</div>
+                                <div class="feature-desc">월별 개인정보 점검 및 휴먼 인 더 루프 시스템 구축 필요</div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3 class="card-title">사용성 제약</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item critical">
+                                <div class="feature-title">권한 관리 체계 미연동</div>
+                                <div class="feature-desc">신규 권한 체계 및 개인화 서비스 개발 필요</div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">출력 형식 제약</div>
+                                <div class="feature-desc">HWP 생성 기술적 제약 (마크다운 출력으로 대체, 복사-붙여넣기 지원)</div>
+                            </li>
+                            <li class="feature-item critical">
+                                <div class="feature-title">대화 세션 관리 미비</div>
+                                <div class="feature-desc">LangGraph 라우팅 및 멀티턴 대화 컨텍스트 메모리 관리 미구현</div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">고급 문서 분석 기능 부족</div>
+                                <div class="feature-desc">문서 비교, 교차 분석, 트렌드 분석 등 고급 기능 미구현</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="data-status" class="tab-content">
+                <div class="content-grid">
+                    <div class="info-card">
+                        <h3 class="card-title">학습 데이터 개요</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">2천+</div>
+                                <div class="metric-label">목표 문서 수</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">법령규정</div>
+                                <div class="metric-label">주요 분야</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">국정감사</div>
+                                <div class="metric-label">정책 자료</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">R&D</div>
+                                <div class="metric-label">연구 보고서</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">대용량</div>
+                                <div class="metric-label">데이터 규모</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">벡터화</div>
+                                <div class="metric-label">임베딩 처리</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3 class="card-title">데이터 품질 관리</h3>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">데이터 정제 프로세스</div>
+                                <div class="feature-desc">표준화된 전처리 파이프라인을 통한 데이터 품질 관리</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 85%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">벡터 임베딩 최적화</div>
+                                <div class="feature-desc">한국어 특화 임베딩 모델을 활용한 문서 벡터화</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item warning">
+                                <div class="feature-title">문서 형식 표준화</div>
+                                <div class="feature-desc">다양한 원본 형식(PDF, HWP, DOC)의 일관된 처리 체계</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 75%"></div>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">데이터 검증 체계</div>
+                                <div class="feature-desc">자동화된 품질 검증 및 오류 탐지 시스템</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 80%"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert-warning">
+                    <strong>개선 필요 사항:</strong> 
+                    <ul>
+                        <li>문서 형식별 최적화된 파싱 알고리즘 개발</li>
+                        <li>실시간 데이터 업데이트 및 동기화 체계 구축</li>
+                        <li>메타데이터 자동 추출 및 태깅 시스템 고도화</li>
+                        <li>벡터 데이터베이스 성능 최적화 및 확장성 개선</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × 주식회사 데이터스트림즈<br>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // 모든 탭 비활성화
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        content.style.display = 'none';
+                    });
+                    
+                    // 클릭된 탭 활성화
+                    this.classList.add('active');
+                    const targetContent = document.getElementById(targetTab);
+                    targetContent.style.display = 'block';
+                    targetContent.classList.add('active');
+                });
+            });
+
+            // 프로그레스 바 애니메이션
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = width;
+                        }, 100);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+        });
+    </script>
+</body>
+</html>
