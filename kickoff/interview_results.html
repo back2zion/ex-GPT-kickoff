@@ -13,9 +13,10 @@
 
         body {
             font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #333;
             background: #fff;
+            font-size: 18px;
         }
 
         /* 상단 유틸리티 바 */
@@ -199,11 +200,14 @@
             margin-top: 113px;
             padding: 4rem 0;
             background: #f8f9fa;
+            max-width: 100%;
+            width: 100%;
         }
 
         .content-container {
             width: 100%;
-            padding: 0 4rem;
+            max-width: 100%;
+            padding: 0 2rem;
         }
 
         /* 페이지 헤더 */
@@ -217,14 +221,14 @@
         }
 
         .page-title {
-            font-size: 2.5rem;
+            font-size: 3.2rem;
             font-weight: 700;
             color: #1976d2;
             margin-bottom: 1rem;
         }
 
         .page-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             color: #666;
         }
 
@@ -233,13 +237,15 @@
             background: #e8f5e8;
             border: 1px solid #4caf50;
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2rem;
             margin-bottom: 3rem;
             color: #2e7d32;
+            font-size: 1.1rem;
         }
 
         .alert strong {
             color: #1b5e20;
+            font-size: 1.15rem;
         }
 
         /* 컨텐츠 그리드 */
@@ -253,9 +259,11 @@
         .info-card {
             background: white;
             border-radius: 8px;
-            padding: 2rem;
+            padding: 2.5rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border-top: 4px solid #1976d2;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* 카드 드롭다운 스타일링 */
@@ -292,7 +300,7 @@
         }
 
         .card-title {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
             font-weight: 600;
             color: #333;
             margin-bottom: 1.5rem;
@@ -322,18 +330,20 @@
             font-weight: 600;
             color: #721c24;
             margin-bottom: 0.5rem;
+            font-size: 1.2rem;
         }
 
         .summary-text {
             color: #721c24;
             font-style: italic;
+            font-size: 1.1rem;
         }
 
         .requirement-item {
             background: #f8f9fa;
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
             border-left: 3px solid #1976d2;
         }
 
@@ -341,11 +351,13 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 0.5rem;
+            font-size: 1.3rem;
         }
 
         .requirement-desc {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
         }
 
         /* 우선순위 섹션 */
@@ -359,7 +371,7 @@
         .priority-item {
             background: #d1ecf1;
             border-radius: 8px;
-            padding: 1rem;
+            padding: 1.2rem;
             text-align: center;
             border: 1px solid #bee5eb;
         }
@@ -367,13 +379,13 @@
         .priority-label {
             font-weight: 600;
             color: #0c5460;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             margin-bottom: 0.5rem;
         }
 
         .priority-value {
             color: #0c5460;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             font-weight: 500;
         }
 
@@ -385,9 +397,10 @@
 
         .issue-item {
             color: #721c24;
-            margin-bottom: 0.5rem;
-            padding-left: 1rem;
+            margin-bottom: 0.7rem;
+            padding-left: 1.5rem;
             position: relative;
+            font-size: 1.05rem;
         }
 
         .issue-item::before {
@@ -401,9 +414,11 @@
             background: #fff3cd;
             border: 1px solid #ffeeba;
             border-radius: 8px;
-            padding: 1rem;
+            padding: 1.5rem;
             margin: 1rem 0;
             color: #856404;
+            font-size: 1.1rem;
+            line-height: 1.8;
         }
 
         /* 푸터 */
@@ -551,6 +566,21 @@
                 </div>
                 <div class="nav-item">
                     <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                                <a href="customer_requirements.html#contacts" class="dropdown-item">📞 주요 연락처 및 협업 체계</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>

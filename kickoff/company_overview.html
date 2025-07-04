@@ -13,9 +13,10 @@
 
         body {
             font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #333;
             background: #fff;
+            font-size: 18px;
         }
 
         /* 상단 유틸리티 바 */
@@ -197,11 +198,14 @@
             margin-top: 113px;
             padding: 4rem 0;
             background: #f8f9fa;
+            max-width: 100%;
+            width: 100%;
         }
 
         .content-container {
             width: 100%;
-            padding: 0 4rem;
+            max-width: 100%;
+            padding: 0 2rem;
         }
 
         /* 페이지 헤더 */
@@ -215,32 +219,37 @@
         }
 
         .page-title {
-            font-size: 2.5rem;
+            font-size: 3.2rem;
             font-weight: 700;
             color: #1976d2;
             margin-bottom: 1rem;
         }
 
         .page-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             color: #666;
         }
 
         /* 컨텐츠 그리드 */
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(4, auto);
             gap: 2rem;
             margin-bottom: 3rem;
+            max-height: none;
+            overflow: visible;
         }
 
         .info-card {
             background: white;
             border-radius: 8px;
-            padding: 2rem;
+            padding: 2.5rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             border-top: 4px solid #1976d2;
+            width: 100%;
+            max-width: 100%;
         }
 
         .info-card:hover {
@@ -249,7 +258,7 @@
         }
 
         .card-title {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
             font-weight: 600;
             color: #333;
             margin-bottom: 1.5rem;
@@ -283,7 +292,7 @@
         }
 
         .metric-value {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: #1976d2;
             margin-bottom: 0.5rem;
@@ -291,7 +300,7 @@
 
         .metric-label {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             line-height: 1.4;
         }
 
@@ -319,12 +328,12 @@
             font-weight: 600;
             color: #333;
             margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
         }
 
         .feature-desc {
             color: #666;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             line-height: 1.6;
         }
 
@@ -423,7 +432,7 @@
         .advantage-content h4 {
             color: #333;
             margin-bottom: 15px;
-            font-size: 16px;
+            font-size: 1.2rem;
             font-weight: 600;
         }
 
@@ -439,6 +448,7 @@
             position: relative;
             color: #555;
             line-height: 1.5;
+            font-size: 1.05rem;
         }
 
         .advantage-content li:before {
@@ -475,7 +485,7 @@
 
         .timeline-desc {
             color: #555;
-            font-size: 14px;
+            font-size: 1.1rem;
         }
 
         .technical-stack {
@@ -487,7 +497,7 @@
         .technical-stack h5 {
             color: #333;
             margin-bottom: 10px;
-            font-size: 14px;
+            font-size: 1.1rem;
         }
 
         .tech-tags {
@@ -501,7 +511,7 @@
             color: #1976d2;
             padding: 4px 10px;
             border-radius: 12px;
-            font-size: 12px;
+            font-size: 1.0rem;
             font-weight: 500;
         }
 
@@ -516,7 +526,7 @@
         .differentiation-summary h4 {
             color: #333;
             margin-bottom: 20px;
-            font-size: 18px;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -537,7 +547,7 @@
             background: #f8f9ff;
             border-radius: 8px;
             border-left: 3px solid #1976d2;
-            font-size: 14px;
+            font-size: 1.1rem;
             line-height: 1.5;
         }
 
@@ -721,6 +731,21 @@
                 <div class="nav-item">
                     <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
                 </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                                <a href="customer_requirements.html#contacts" class="dropdown-item">📞 주요 연락처 및 협업 체계</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </div>
     </header>
@@ -808,7 +833,7 @@
 
                 <div class="info-card" id="project-experience">
                     <div class="card-title dropdown-feature" onclick="toggleDropdown('project-capability')">
-                        🚀 ex-GPT 프로젝트 수행 역량
+                        🚀 ex-GPT 고도화 수행 역량
                         <span class="dropdown-arrow">▼</span>
                     </div>
                     <div class="card-dropdown" id="project-capability">
@@ -835,7 +860,7 @@
 
                 <div class="info-card">
                     <div class="card-title dropdown-feature" onclick="toggleDropdown('competitive-advantage')">
-                        🎯 AI 서비스 설계 및 경쟁 우위
+                        🎯 AI 서비스 및 경쟁 우위
                         <span class="dropdown-arrow">▼</span>
                     </div>
                     <div class="card-dropdown" id="competitive-advantage">
@@ -867,7 +892,7 @@
                                         <div class="advantage-content">
                                             <h4>데이터 패브릭 통합 솔루션</h4>
                                             <ul>
-                                                <li>기존 와이즈넛 시스템과의 완벽한 호환성 보장</li>
+                                                <li>기존 검색 시스템과의 완벽한 호환성 보장</li>
                                                 <li>데이터 중복 검증 및 품질 관리 체계</li>
                                                 <li>멀티모달 검색 인터페이스 및 STT 기반 회의록 자동 생성</li>
                                                 <li>권한별 개인화 서비스 및 레거시 시스템 통합</li>
@@ -948,7 +973,7 @@
                                     <h4><span class="summary-icon">⭐</span> 핵심 차별화 포인트</h4>
                                     <div class="summary-grid">
                                         <div class="summary-item">
-                                            <strong>검증된 파트너십:</strong> DataStreams와 NeoAli 간의 명확한 R&R Matrix 기반 협업 체계
+                                            <strong>검증된 협업 체계:</strong> 데이터스트림즈의 명확한 역할 분담과 책임 기반 프로젝트 관리
                                         </div>
                                         <div class="summary-item">
                                             <strong>실용적 접근:</strong> 7월 15일 오픈을 위한 현실적 개발 일정 및 단계별 고도화 전략
@@ -960,6 +985,7 @@
                                             <strong>지속가능성:</strong> 운영 이후 지속적인 업데이트 및 확장 가능한 아키텍처 설계
                                         </div>
                                     </div>
+                                </div>    
                         </div>
                     </div>
                 </div>
