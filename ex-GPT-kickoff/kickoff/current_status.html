@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. 현 학습데이터 현황 (AS-IS vs TO-BE) - ex-GPT 프로젝트</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <!-- 강제 헤더 스타일 -->
+    <style type="text/css">
+        /* 헤더 강제 표시 스타일 */
+        .utility-bar { display: block !important; }
+        .main-header { display: block !important; }
+        .header-container { display: flex !important; }
+        .main-nav { display: flex !important; }
+    </style>
+    <style>
+        /* 회사 개요 페이지 전용 스타일 */
+        body {
+            font-size: 18px;
+        }
+        
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            max-width: 100%;
+            width: 100%;
+        }
+        .content-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 2rem;
+        }
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 4rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+        .page-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        .page-subtitle {
+            font-size: 1.6rem;
+            color: #666;
+        }
+        /* AS-IS TO-BE 비교 컨테이너 */
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .comparison-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .comparison-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+        .comparison-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .section-header {
+            padding: 2.5rem;
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: white;
+        }
+        .asis-header {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+        }
+        .tobe-header {
+            background: linear-gradient(135deg, #28a745, #2ecc71);
+        }
+        .section-content {
+            padding: 2.5rem;
+        }
+        /* 데이터 카테고리 */
+        .data-category {
+            margin-bottom: 2.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        .category-header {
+            background: #f8f9fa;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .category-header::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+        .category-content {
+            background: white;
+            padding: 2rem;
+        }
+        /* 메트릭 카드 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .metric-value.warning {
+            color: #ffc107;
+        }
+        .metric-value.success {
+            color: #28a745;
+        }
+        /* 리스트 스타일 */
+        .data-list {
+            list-style: none;
+            padding: 0;
+        }
+        .data-item {
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.6rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #1976d2;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .data-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        .data-item.warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        .data-item.critical {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .data-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        /* 프로세스 플로우 */
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .process-step {
+            text-align: center;
+            flex: 1;
+            padding: 0.5rem;
+        }
+        .process-step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1976d2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: bold;
+        }
+        .process-step-text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .process-arrow {
+            color: #1976d2;
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+        }
+        /* 알림 */
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        /* 진행률 바 */
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #1976d2;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        .progress-fill.warning {
+            background: #ffc107;
+        }
+        .progress-fill.success {
+            background: #28a745;
+        }
+        /* 아키텍처 섹션 */
+        .architecture-section {
+            background: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 3rem 0;
+            overflow: visible;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .architecture-section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(25, 118, 210, 0.3);
+            border: 2px solid #1976d2;
+        }
+
+        .section-title-main {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 3rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-icon-main {
+            font-size: 3rem;
+        }
+
+        .mermaid-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+            overflow-y: visible;
+            min-height: 800px;
+            width: 100vw;
+            max-width: none;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+        }
+
+        .mermaid {
+            text-align: left;
+            width: 100%;
+            min-width: 2000px;
+            min-height: 800px;
+            font-size: 13px;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Mermaid 다이어그램 전체 레이아웃 최적화 */
+        .mermaid svg {
+            width: 2000px !important;
+            height: auto !important;
+            margin: 0 !important;
+        }
+
+        /* Mermaid 다이어그램 호버 효과 */
+        .mermaid .node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mermaid .node:hover {
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+        }
+
+        .mermaid .node rect {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .node:hover rect {
+            stroke-width: 3px;
+            stroke: #1976d2;
+        }
+
+        .mermaid .node text {
+            transition: all 0.3s ease;
+            font-size: 11px;
+        }
+
+        .mermaid .node:hover text {
+            font-weight: bold;
+            fill: #1976d2;
+        }
+
+        /* 서브그래프 스타일링 개선 */
+        .mermaid .cluster {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .cluster:hover {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+        }
+
+        .mermaid .cluster rect {
+            transition: all 0.3s ease;
+            fill: rgba(255, 255, 255, 0.8);
+            stroke-width: 1.5px;
+        }
+
+        .mermaid .cluster:hover rect {
+            stroke-width: 2.5px;
+            stroke: #1976d2;
+        }
+
+        /* 엣지 호버 효과 */
+        .mermaid .edgePath {
+            transition: all 0.3s ease;
+        }
+
+        .mermaid .edgePath:hover {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .mermaid .edgePath path {
+            transition: all 0.3s ease;
+            stroke-width: 2px;
+        }
+
+        .mermaid .edgePath:hover path {
+            stroke-width: 3px;
+            stroke: #1976d2;
+        }
+
+        /* 서브그래프 제목 스타일링 */
+        .mermaid .cluster-label text {
+            font-size: 13px;
+            font-weight: bold;
+            fill: #1976d2;
+        }
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+            .page-title {
+                font-size: 2rem;
+            }
+            .main-content {
+                margin-top: 80px;
+            }
+            .mermaid-container {
+                padding: 1rem;
+                overflow-x: auto;
+                overflow-y: visible;
+            }
+            .mermaid {
+                min-height: 800px;
+                font-size: 10px;
+            }
+            .mermaid svg {
+                min-width: 800px !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .mermaid-container {
+                padding: 3rem;
+            }
+            .mermaid {
+                min-height: 1400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+            <div class="utility-left">
+                <span>🚀 ex-GPT 고도화 프로젝트</span>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-partnership">
+                    <a href="main_index.html">
+                        <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                    </a>
+                    <span class="partnership-divider">×</span>
+                    <a href="#" class="datastreams-logo-img">
+                        <img src="images/ds_logo.svg" alt="DataStreams" class="ds-logo-img">
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+ 
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">4. 학습데이터 현황</h1>
+                <p class="page-subtitle">AS-IS vs TO-BE 비교 분석</p>
+            </div>    
+    <!-- ex-GPT 시스템 데이터 처리 흐름도 -->
+    <div class="architecture-section" id="architecture" onclick="window.open('updated_current_status.html', '_blank')" style="cursor: pointer; transition: all 0.3s ease;">
+        <h2 class="section-title-main">
+            <span class="section-icon-main">📊</span>
+            ex-GPT 파일 업로드 및 처리 흐름도 (클릭하여 상세보기)
+        </h2>
+        <div class="mermaid-container" style="position: relative;">
+            <!-- 오버레이 클릭 안내 -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; background: rgba(25, 118, 210, 0.9); color: white; padding: 2rem; border-radius: 12px; text-align: center; font-size: 1.2rem; font-weight: bold; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
+                🖱️ 클릭하여 Knowledge Parser 기반<br/>상세 아키텍처 다이어그램 보기
+            </div>
+            <div class="mermaid" style="filter: blur(2px); opacity: 0.7;">
+                graph LR
+                %% 학습 데이터 입력 단계
+                A1[📄 법령규정 데이터] --> B1{데이터 정제<br/>및 중복제거}
+                A2[📊 국정감사 자료] --> B1
+                A3[📋 R&D 보고서] --> B1
+                A4[📰 정책 자료] --> B1
+                A5[🎤 음성 파일] --> B2{Whisper-Large-v3<br/>STT 변환}
+                A6[🖼️ 이미지/도면] --> B3{Florence-2-Large<br/>비전 처리}
+
+                %% 전처리 단계
+                B1 --> C1[텍스트 파싱<br/>및 구조화]
+                B2 --> C1
+                B3 --> C1
+
+                %% 품질 검증 단계
+                C1 --> D1{개인정보<br/>검출 시스템}
+                D1 --> D2{중복 파일<br/>검증}
+                D2 --> D3{Human in the Loop<br/>품질 검증}
+
+                %% 벡터화 및 저장
+                D3 --> E1[Qdrant<br/>벡터 데이터베이스]
+                E1 --> E2[메타데이터<br/>자동 추출]
+
+                %% 사용자 질의 처리
+                F1[👤 사용자 질의] --> G1{LangGraph<br/>라우팅 시스템}
+                
+                %% 권한 검증
+                G1 --> H1{권한 체계<br/>검증}
+                H1 --> H2[개인화된<br/>데이터 접근]
+
+                %% 질의 유형별 처리
+                H2 --> I1{질의 유형<br/>분석}
+                I1 --> J1[📝 일반 LLM<br/>QWen3-235B/Llama4 Maverick/MiniMax-M1 등]
+                I1 --> J2[🔍 RAG 검색<br/>벡터 유사도 기반]
+                I1 --> J3[🔧 MCP 도구<br/>회의실/배차 신청]
+                I1 --> J4[🖼️ 이미지 검색<br/>Florence-2 기반]
+                I1 --> J5[🎤 음성 처리<br/>Whisper STT]
+
+                %% RAG 검색과 벡터 DB 연결
+                J2 --> E1
+                E1 --> K1[답변 생성<br/>및 검증]
+
+                %% 기타 모델들도 답변 생성으로 연결
+                J1 --> K1
+                J3 --> K1
+                J4 --> K1
+                J5 --> K1
+
+                K1 --> L1[📊 마크다운<br/>형식 출력]
+                L1 --> L2[📥 파일 다운로드<br/>콘텐츠 프리뷰]
+
+                %% 시스템 모니터링
+                E1 --> M1[📈 시스템 성능<br/>모니터링]
+                K1 --> M1
+                M1 --> M2[월별 품질<br/>점검 보고서]
+
+                %% 스타일링
+                classDef inputData fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+                classDef processing fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+                classDef storage fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+                classDef userFlow fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+                classDef output fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+                classDef monitoring fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+
+                class A1,A2,A3,A4,A5,A6 inputData
+                class B1,B2,B3,C1,D1,D2,D3 processing
+                class E1,E2 storage
+                class F1,G1,H1,H2,I1,J1,J2,J3,J4,J5,K1 userFlow
+                class L1,L2 output
+                class M1,M2 monitoring
+        </div>
+    </div>
+        <div style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
+            <h3 style="color: #1976d2; margin-bottom: 1.5rem; font-size: 1.6rem;">🔧 핵심 기술 스택</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.3s ease;">
+                    <strong style="font-size: 1.2rem; color: #1976d2;">🧠 AI 모델</strong><br/>
+                    <span style="font-size: 1rem; line-height: 1.8;">• QWen3-235B-A22B<br/>
+                    • Llama4-Maverick 400B<br/>
+                    • MiniMax-M1 456B</span>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.3s ease;">
+                    <strong style="font-size: 1.2rem; color: #1976d2;">🔍 멀티모달</strong><br/>
+                    <span style="font-size: 1rem; line-height: 1.8;">• Florence-2-Large 0.77B<br/>
+                    • Whisper-Large-v3<br/>
+                    • Qdrant 벡터 DB</span>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 6px; border: 1px solid #e0e0e0; transition: transform 0.3s ease;">
+                    <strong style="font-size: 1.2rem; color: #1976d2;">🛠️ 개발 환경</strong><br/>
+                    <span style="font-size: 1rem; line-height: 1.8;">• LangGraph 라우팅<br/>
+                    • Poetry 환경 관리<br/>
+                    • H100 GPU 클러스터</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <div class="comparison-container">
+                <!-- AS-IS 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header asis-header">
+                        🔍 AS-IS (현재 상황)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 기본 시스템 현황 -->
+                        <div class="data-category">
+                            <div class="category-header">기본 시스템 현황</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">Llama3-70B</div>
+                                        <div class="metric-label">기존 LLM 모델</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">단발성</div>
+                                        <div class="metric-label">대화 모드</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">기본</div>
+                                        <div class="metric-label">RAG 시스템</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">미비</div>
+                                        <div class="metric-label">권한 체계</div>
+                                    </div>
+                                </div>
+                                
+                                <ul class="data-list">
+                                    <li class="data-item critical">Single-Turn 대화만 지원 (사용자 불만 급증)</li>
+                                    <li class="data-item warning">구형 Llama3-70B 모델 사용</li>
+                                    <li class="data-item critical">권한 관리 체계 미연동</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 학습 데이터 현황 -->
+                        <div class="data-category">
+                            <div class="category-header">학습 데이터 현황</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value">약 35,000</div>
+                                        <div class="metric-label">기존 문서 수</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">제한적</div>
+                                        <div class="metric-label">데이터 범위</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">수동</div>
+                                        <div class="metric-label">업데이트 방식</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value warning">텍스트만</div>
+                                        <div class="metric-label">지원 형식</div>
+                                    </div>
+                                </div>
+
+                                <div class="process-flow">
+                                    <div class="process-step">
+                                        <div class="process-step-icon">1</div>
+                                        <div class="process-step-text">원본 수집</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">2</div>
+                                        <div class="process-step-text">수동 전처리</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">3</div>
+                                        <div class="process-step-text">벡터화</div>
+                                    </div>
+                                </div>
+
+                                <ul class="data-list">
+                                    <li class="data-item">법령규정 데이터 (기본 범위)</li>
+                                    <li class="data-item">국정감사 자료 (제한적 범위)</li>
+                                    <li class="data-item warning">R&D 보고서 (일부만 포함)</li>
+                                    <li class="data-item critical">멀티모달 데이터 미지원</li>
+                                    <li class="data-item warning">수동 업데이트로 인한 지연</li>
+                                </ul>
+
+                                <div class="alert alert-warning">
+                                    <strong>주요 제약사항:</strong> 텍스트 기반 데이터만 처리 가능, 이미지·도면·음성 데이터 미지원
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성능 및 제약사항 -->
+                        <div class="data-category">
+                            <div class="category-header">성능 및 제약사항</div>
+                            <div class="category-content">
+                                <ul class="data-list">
+                                    <li class="data-item critical">개인정보 검출 시스템 미비</li>
+                                    <li class="data-item warning">데이터 품질 검증 체계 부족</li>
+                                    <li class="data-item warning">실시간 업데이트 불가</li>
+                                    <li class="data-item critical">중복 데이터 관리 체계 미흡</li>
+                                    <li class="data-item warning">메타데이터 자동 추출 미지원</li>
+                                </ul>
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill warning" style="width: 65%"></div>
+                                </div>
+                                <p style="text-align: center; margin-top: 0.5rem; color: #856404; font-size: 0.9rem;">
+                                    데이터 활용 효율성: 65%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TO-BE 섹션 -->
+                <div class="comparison-section">
+                    <div class="section-header tobe-header">
+                        🚀 TO-BE (목표 시스템)
+                    </div>
+                    <div class="section-content">
+                        
+                        <!-- 고도화된 시스템 -->
+                        <div class="data-category">
+                            <div class="category-header">고도화된 시스템</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value success">Qwen3-235B</div>
+                                        <div class="metric-label">등 최신 모델 적용</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">멀티턴</div>
+                                        <div class="metric-label">대화 모드</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">고도화</div>
+                                        <div class="metric-label">RAG 시스템</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">완비</div>
+                                        <div class="metric-label">권한 체계</div>
+                                    </div>
+                                </div>
+                                
+                                <ul class="data-list">
+                                    <li class="data-item success">LangGraph 기반 멀티턴 대화 지원</li>
+                                    <li class="data-item success">QWen3-235B, MiniMax-M1(456B), Llama4-Maverick(400B) 등 최신 LLM</li>
+                                    <li class="data-item success">신규 권한 체계 및 개인화 서비스</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- 확장된 학습 데이터 -->
+                        <div class="data-category">
+                            <div class="category-header">확장된 학습 데이터</div>
+                            <div class="category-content">
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-value success">40,000+</div>
+                                        <div class="metric-label">목표 학습 데이터</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">전면</div>
+                                        <div class="metric-label">데이터 범위</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">혼합형</div>
+                                        <div class="metric-label">업데이트 방식</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value success">멀티모달</div>
+                                        <div class="metric-label">지원 형식</div>
+                                    </div>
+                                </div>
+
+                                <div class="process-flow">
+                                    <div class="process-step">
+                                        <div class="process-step-icon">1</div>
+                                        <div class="process-step-text">원본 수집</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">2</div>
+                                        <div class="process-step-text">AI 전처리</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">3</div>
+                                        <div class="process-step-text">품질 검증</div>
+                                    </div>
+                                    <div class="process-arrow">→</div>
+                                    <div class="process-step">
+                                        <div class="process-step-icon">4</div>
+                                        <div class="process-step-text">벡터화</div>
+                                    </div>
+                                </div>
+
+                                <ul class="data-list">
+                                    <li class="data-item success">법령규정 + 최신 개정안 자동 반영</li>
+                                    <li class="data-item success">국정감사 + 전체 정책 자료 통합</li>
+                                    <li class="data-item success">R&D 보고서 + 기술 문서 전체 포함</li>
+                                    <li class="data-item success">Florence-2-Large (0.77B) 비전-언어 통합 모델 / Whisper-Large-v3 다국어 음성 인식 시스템 </li>
+                                    <li class="data-item success">입력 데이터에 따른 혼합형 데이터 업데이트 시스템</li>
+                                </ul>
+
+                                <div class="alert alert-success">
+                                    <strong>핵심 혁신:</strong> 텍스트·이미지·음성 멀티모달 통합 처리, 혼합형 데이터 파이프라인<br>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 성능 및 품질 관리 -->
+                        <div class="data-category">
+                            <div class="category-header">성능 및 품질 관리</div>
+                            <div class="category-content">
+                                <ul class="data-list">
+                                    <li class="data-item success">월별 개인정보 자동 검출 및 점검</li>
+                                    <li class="data-item success">Human in the Loop 품질 검증 체계</li>
+                                    <li class="data-item success">Qdrant 기반 분산 벡터 업데이트</li>
+                                    <li class="data-item success">중복 제거 및 버전 관리 자동화</li>
+                                    <li class="data-item success">멀티모달 메타데이터 자동 추출</li>
+                                </ul>
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill success" style="width: 95%"></div>
+                                </div>
+                                <p style="text-align: center; margin-top: 0.5rem; color: #155724; font-size: 0.9rem;">
+                                    데이터 활용 효율성: 95%
+                                </p>
+
+                                <div class="alert alert-info">
+                                    <strong>7월 15일 오픈 목표:</strong> 기존 데이터 품질 개선, 신규 데이터 소스 통합, 최신 LLM 모델 적용
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × DataStreams
+            </div>
+            <div class="footer-partnership">
+                <div class="partner-logo">🏢 한국도로공사</div>
+                <div class="partnership-icon">×</div>
+                <div class="partner-logo">🚀 DataStreams</div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <!-- Mermaid 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <script>
+        // Mermaid 초기화
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 80,
+                rankSpacing: 120
+            },
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1976d2',
+                primaryBorderColor: '#1976d2',
+                lineColor: '#757575',
+                secondaryColor: '#f3e5f5',
+                tertiaryColor: '#e8f5e8',
+                clusterBkg: 'rgba(255, 255, 255, 0.9)',
+                clusterBorder: '#1976d2'
+            },
+            maxTextSize: 90000,
+            maxEdges: 200
+        });
+
+        // 호버 효과를 위한 스타일 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mermaid 다이어그램이 렌더링된 후 실행
+            setTimeout(() => {
+                const style = document.createElement('style');
+                style.textContent = `
+                    /* Mermaid 노드 호버 효과 */
+                    .mermaid .node rect,
+                    .mermaid .node circle,
+                    .mermaid .node ellipse,
+                    .mermaid .node polygon {
+                        transition: all 0.3s ease !important;
+                        cursor: pointer !important;
+                    }
+                    
+                    .mermaid .node:hover rect,
+                    .mermaid .node:hover circle,
+                    .mermaid .node:hover ellipse,
+                    .mermaid .node:hover polygon {
+                        filter: drop-shadow(0 8px 16px rgba(25, 118, 210, 0.4)) !important;
+                        stroke-width: 3px !important;
+                    }
+                    
+                    /* 텍스트 호버 효과 */
+                    .mermaid .node:hover .nodeLabel {
+                        font-weight: bold !important;
+                        font-size: 14px !important;
+                        fill: #0d47a1 !important;
+                    }
+                    
+                    /* 다양한 노드 타입에 대한 특별 처리 */
+                    .mermaid .node.processing:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(123, 31, 162, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.storage:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(56, 142, 60, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.userFlow:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(245, 124, 0, 0.4)) !important;
+                    }
+                    
+                    .mermaid .node.output:hover rect {
+                        filter: drop-shadow(0 8px 16px rgba(194, 24, 91, 0.4)) !important;
+                    }
+                    
+                    /* 연결선 효과 */
+                    .mermaid .flowchart-link {
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .mermaid .node:hover ~ .flowchart-link,
+                    .mermaid .flowchart-link:hover {
+                        stroke-width: 4px !important;
+                        stroke: #1976d2 !important;
+                        filter: drop-shadow(0 2px 4px rgba(25, 118, 210, 0.3)) !important;
+                    }
+                    
+                    /* 전체적인 다이어그램 영역 효과 */
+                    .mermaid {
+                        border-radius: 8px !important;
+                        background: transparent !important;
+                    }
+                    
+                    /* 호버 시 주변 노드 연결 하이라이트 */
+                    .mermaid .node:hover {
+                        z-index: 10 !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // 각 노드에 이벤트 리스너 추가
+                const nodes = document.querySelectorAll('.mermaid .node');
+                nodes.forEach(node => {
+                    node.addEventListener('mouseenter', function() {
+                        // 연결된 노드들에 약간의 하이라이트 효과 추가
+                        const nodeId = this.getAttribute('id');
+                        if (nodeId) {
+                            const connectedEdges = document.querySelectorAll(`[marker-end*="${nodeId}"], [marker-start*="${nodeId}"]`);
+                            connectedEdges.forEach(edge => {
+                                edge.style.strokeWidth = '3px';
+                                edge.style.stroke = '#1976d2';
+                            });
+                        }
+                    });
+                    
+                    node.addEventListener('mouseleave', function() {
+                        // 연결된 노드들의 하이라이트 효과 제거
+                        const edges = document.querySelectorAll('.mermaid .flowchart-link');
+                        edges.forEach(edge => {
+                            edge.style.strokeWidth = '';
+                            edge.style.stroke = '';
+                        });
+                    });
+                });
+            }, 1000); // Mermaid 렌더링을 위해 1초 대기
+            
+            // 프로그레스 바 애니메이션
+            const progressBars = document.querySelectorAll('.progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = width;
+                        }, 500);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => observer.observe(bar));
+
+            // 카드 애니메이션
+            const cards = document.querySelectorAll('.data-category');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

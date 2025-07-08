@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ex-GPT 고도화 용역 착수보고서 | 한국도로공사</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <style>
+        /* 메인 페이지 전용 스타일 */
+        body {
+            font-size: 18px;
+        }
+
+        /* 히어로 섹션 */
+        .hero-section {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%);
+            color: white;
+            padding: 6rem 0 4rem;
+            margin-top: 113px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="white" opacity="0.05"><polygon points="0,100 1000,0 1000,100"/></svg>');
+            pointer-events: none;
+        }
+
+        .hero-container {
+            width: 100%;
+            padding: 0 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffffff, #e3f2fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-partnership {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .partner-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .partnership-icon {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        /* 프로젝트 정보 */
+        .project-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .info-container {
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 4rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .info-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+            border-radius: 2px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .info-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .info-icon {
+            font-size: 3rem;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #333;
+            margin-bottom: 4rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+            border-radius: 2px;
+        }
+
+        /* 네비게이션 카드 */
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #1976d2;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: #1976d2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #bbdefb;
+            transition: all 0.2s ease;
+        }
+
+        .tech-tag:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        /* 반응형 및 호환성 개선 */
+        
+        /* CSS Grid 폴백 */
+        .nav-cards {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        @supports (display: grid) {
+            .nav-cards {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 3rem;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+        }
+        
+        .info-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        @supports (display: grid) {
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Transform 호환성 */
+        .nav-card:hover {
+            -webkit-transform: translateY(-4px);
+            -ms-transform: translateY(-4px);
+            transform: translateY(-4px);
+        }
+        
+        .info-card:hover {
+            -webkit-transform: translateY(-8px);
+            -ms-transform: translateY(-8px);
+            transform: translateY(-8px);
+        }
+        
+        /* Flexbox 호환성 */
+        .hero-partnership {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+        
+        /* 그라데이션 호환성 */
+        .hero-section {
+            background: #1976d2; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%);
+            background: -o-linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%);
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%);
+        }
+        
+        .project-info {
+            background: #f8f9fa; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: -o-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        }
+        
+        .main-content {
+            background: #f8f9fa; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: -o-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        }
+        
+        /* 텍스트 클리핑 호환성 */
+        .hero-title {
+            color: #ffffff; /* 폴백 색상 */
+            background: -webkit-linear-gradient(45deg, #ffffff, #e3f2fd);
+            background: linear-gradient(45deg, #ffffff, #e3f2fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Backdrop Filter 폴백 */
+        .hero-partnership {
+            background: rgba(255,255,255,0.1); /* 폴백 */
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* IE11 대응 */
+        @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+            .hero-partnership {
+                background: rgba(255,255,255,0.15);
+                backdrop-filter: none;
+            }
+            
+            .hero-title {
+                color: #ffffff;
+                -webkit-text-fill-color: inherit;
+            }
+        }
+        
+        /* 성능 최적화 */
+        .nav-card, .info-card {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                -webkit-transition: none !important;
+                transition: none !important;
+                -webkit-animation: none !important;
+                animation: none !important;
+            }
+        }
+        
+        /* 추가 브레이크포인트 */
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .utility-container, .header-container, .info-container, .content-container, .footer-container {
+                padding: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .nav-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+            <div class="utility-left">
+                <span>🚀 ex-GPT 고도화 프로젝트</span>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-partnership">
+                    <a href="main_index.html">
+                        <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                    </a>
+                    <span class="partnership-divider">×</span>
+                    <a href="#" class="datastreams-logo-img">
+                        <img src="images/ds_logo.svg" alt="DataStreams" class="ds-logo-img">
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title">ex-GPT 고도화 용역</h1>
+            <p class="hero-subtitle">착수보고서</p>
+            <div class="hero-partnership">
+                <div class="partner-logo">🏢 한국도로공사</div>
+                <div class="partnership-icon">🤝</div>
+                <div class="partner-logo">🚀 DataStreams</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 프로젝트 정보 -->
+    <section class="project-info">
+        <div class="info-container">
+            <h2 class="info-title">프로젝트 개요</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">🏢</div>
+                    <div class="info-label">수행사</div>
+                    <div class="info-value">주식회사 데이터스트림즈</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">👨‍💼</div>
+                    <div class="info-label">대표이사</div>
+                    <div class="info-value">이영상</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📅</div>
+                    <div class="info-label">프로젝트 기간</div>
+                    <div class="info-value">2025.06.09 ~ 2025.12.31</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🎯</div>
+                    <div class="info-label">목표 일정</div>
+                    <div class="info-value">2025.07.15 1차 오픈</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 메인 콘텐츠 -->
+    <section class="main-content">
+        <div class="content-container">
+            <h2 class="section-title">보고서 목차</h2>
+            <div class="nav-cards">
+                <a href="company_overview.html" class="nav-card">
+                    <div class="card-number">1</div>
+                    <div class="card-title">데이터스트림즈 현황</div>
+                    <p class="card-description">
+                        20년 공공부문 전문성, 데이터 패브릭 아키텍처 기반 통합 솔루션 역량, 
+                        AI/ML 프로젝트 수행 경험을 기반으로 한 ex-GPT 수행 역량을 소개합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">Data Fabric</span>
+                        <span class="tech-tag">AI/ML</span>
+                        <span class="tech-tag">공공부문</span>
+                    </div>
+                </a>
+
+                <a href="team_organization.html" class="nav-card">
+                    <div class="card-number">2</div>
+                    <div class="card-title">투입인력, 조직, 일정</div>
+                    <p class="card-description">
+                        프로젝트 수행팀 구성, DataStreams-NeoAli 협업 체계, 
+                        단계별 개발 일정 및 R&R 매트릭스를 제시합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">Team Structure</span>
+                        <span class="tech-tag">R&R Matrix</span>
+                        <span class="tech-tag">일정관리</span>
+                    </div>
+                </a>
+
+                <a href="interview_results.html" class="nav-card">
+                    <div class="card-number">3</div>
+                    <div class="card-title">순회 인터뷰 결과 분석</div>
+                    <p class="card-description">
+                        감사처, 기획처, ITS처 등 각 부처별 요구사항 분석 및 
+                        우선순위 기반 개선 방향을 정리합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">요구사항 분석</span>
+                        <span class="tech-tag">우선순위</span>
+                        <span class="tech-tag">개선방향</span>
+                    </div>
+                </a>
+
+                <a href="current_status.html" class="nav-card">
+                    <div class="card-number">4</div>
+                    <div class="card-title">학습데이터 AS-IS vs TO-BE</div>
+                    <p class="card-description">
+                        기존 400+ 건 학습데이터 현황 분석과 목표 데이터 체계를 
+                        비교하여 데이터 품질 개선 방향을 제시합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">RAG</span>
+                        <span class="tech-tag">Vector DB</span>
+                        <span class="tech-tag">데이터 품질</span>
+                    </div>
+                </a>
+
+                <a href="enhancement_plan.html" class="nav-card">
+                    <div class="card-number">5</div>
+                    <div class="card-title">기능 AS-IS vs TO-BE</div>
+                    <p class="card-description">
+                        현재 기능과 목표 기능을 비교하여 멀티모달, STT, 
+                        회의록 자동생성 등 ex-GPT 고도화 방안을 제공합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">Multimodal</span>
+                        <span class="tech-tag">STT</span>
+                        <span class="tech-tag">LLM Routing</span>
+                    </div>
+                </a>
+
+                <a href="customer_requirements.html" class="nav-card">
+                    <div class="card-number">6</div>
+                    <div class="card-title">한국도로공사 지원 요청사항</div>
+                    <p class="card-description">
+                        H100 GPU 서버 관리, API 연동, 권한 체계 구축 등 
+                        프로젝트 성공적 수행을 위한 인프라 및 협업 요청사항을 정리합니다.
+                    </p>
+                    <div class="card-tech-tags">
+                        <span class="tech-tag">H100 GPU</span>
+                        <span class="tech-tag">API 연동</span>
+                        <span class="tech-tag">권한관리</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × DataStreams
+            </div>
+            <div class="footer-partnership">
+                <div class="partner-logo">🏢 한국도로공사</div>
+                <div class="partnership-icon">×</div>
+                <div class="partner-logo">🚀 DataStreams</div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 카드 애니메이션
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

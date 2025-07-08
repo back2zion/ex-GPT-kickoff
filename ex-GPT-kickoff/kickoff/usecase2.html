@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회의록 자동 작성 및 배포 시나리오</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899, #6366f1);
+            background-size: 200% 100%;
+            animation: gradient-flow 4s ease infinite;
+        }
+        
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .title {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .efficiency-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 15px;
+            border: 2px solid #f59e0b;
+        }
+        
+        .scenario-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .scenario-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 40px;
+            border-left: 8px solid #6366f1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scenario-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            background-size: 200% 100%;
+            animation: gradient-flow 3s ease infinite;
+        }
+        
+        .scenario-description {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+        
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .process-step {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .process-step:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #6366f1;
+        }
+        
+        .process-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .process-step:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            margin-right: 20px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .step-description {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .step-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tech-tag {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            color: #3730a3;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #a5b4fc;
+        }
+        
+        .flow-arrows {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .arrow-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 25px solid #6366f1;
+            animation: pulse-arrow 2s infinite;
+        }
+        
+        @keyframes pulse-arrow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        
+        .systems-section {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-radius: 25px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+        
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 35px;
+        }
+        
+        .system-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .system-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #8b5cf6;
+        }
+        
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .system-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .system-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        .system-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        
+        .system-description {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .system-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .feature-badge {
+            background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+            color: #5b21b6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid #a78bfa;
+        }
+        
+        .benefits-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+            border-left: 8px solid #10b981;
+        }
+        
+        .benefits-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .benefit-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #a7f3d0;
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+        }
+        
+        .benefit-title {
+            font-weight: 700;
+            color: #047857;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .benefit-description {
+            color: #065f46;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .time-savings {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: center;
+            margin: 25px 0;
+            border: 2px solid #f59e0b;
+        }
+        
+        @media (max-width: 768px) {
+            .process-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .systems-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">UC-2: MCP 기반 회의록 자동화</h1>
+            <p class="subtitle">STT + AI 요약 + 자동 배포 통합 솔루션</p>
+            <div class="efficiency-badge">⚡ 2-4시간 → 15분 (87% 시간 단축)</div>
+        </div>
+        
+        <!-- 시나리오 섹션 -->
+        <div class="scenario-section">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                사용 시나리오
+            </h2>
+            
+            <div class="scenario-box">
+                <div class="scenario-description">
+                    📹 모바일오피스에서 녹음한 회의 음성을 <span class="highlight">자동으로 정리된 회의록으로 생성</span>하여 녹음 사용자에게 이메일 전송
+                </div>
+            </div>
+            
+            <div class="process-flow">
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <div class="step-title">음성 파일 업로드</div>
+                    </div>
+                    <div class="step-description">
+                        모바일오피스에서 녹음 버튼 클릭 후 회의 종료 시 녹음된 음성 파일을 ex-GPT 시스템에 자동 전송
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">Mobile Office</span>
+                        <span class="tech-tag">Audio Format</span>
+                        <span class="tech-tag">Auto Transfer</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <div class="step-title">STT 처리</div>
+                    </div>
+                    <div class="step-description">
+                        Whisper-large-v3 모델을 활용한 고정밀 한국어 음성 인식으로 텍스트 변환
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">Whisper-v3</span>
+                        <span class="tech-tag">Korean STT</span>
+                        <span class="tech-tag">95% 정확도</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <div class="step-title">내용 분석</div>
+                    </div>
+                    <div class="step-description">
+                        pyannote-audio로 발언자 구분(Speaker Diarization), spaCy로 주제별 분류, LangChain으로 핵심 안건 추출 등 지능형 분석 수행
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">pyannote-audio</span>
+                        <span class="tech-tag">spaCy NLP</span>
+                        <span class="tech-tag">LangChain</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <div class="step-title">구조화</div>
+                    </div>
+                    <div class="step-description">
+                        회의 안건, 논의 사항, 결정 사항, 액션 아이템을 체계적으로 구조화하여 정리
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">Data Structure</span>
+                        <span class="tech-tag">Template</span>
+                        <span class="tech-tag">Classification</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <div class="step-title">요약 생성</div>
+                    </div>
+                    <div class="step-description">
+                        AI 기반 지능형 요약으로 핵심 내용을 압축하고 액션 아이템을 명확히 도출
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">AI Summary</span>
+                        <span class="tech-tag">Action Items</span>
+                        <span class="tech-tag">Key Points</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <div class="step-title">사용자 정보 조회</div>
+                    </div>
+                    <div class="step-description">
+                        Model Context Protocol을 통해 녹음파일을 전송한 사용자 정보를 인사시스템에서 조회
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">MCP Protocol</span>
+                        <span class="tech-tag">HR Integration</span>
+                        <span class="tech-tag">User Identity</span>
+                    </div>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        <div class="step-title">자동 전송</div>
+                    </div>
+                    <div class="step-description">
+                        Exchange 서버 연동을 통해 녹음파일을 업로드한 사용자에게 완성된 회의록을 자동 이메일 전송
+                    </div>
+                    <div class="step-tech">
+                        <span class="tech-tag">Exchange API</span>
+                        <span class="tech-tag">Auto Send</span>
+                        <span class="tech-tag">User Target</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-savings">
+                ⏱️ 총 소요 시간: 기존 2-4시간 → 새로운 방식 15분 (자동 처리)
+            </div>
+        </div>
+        
+        <!-- 연계 시스템 섹션 -->
+        <div class="systems-section">
+            <h2 class="section-title">
+                <span class="section-icon">🔗</span>
+                연계 시스템 아키텍처
+            </h2>
+            
+            <div class="systems-grid">
+                <div class="system-card">
+                    <div class="system-icon">📧</div>
+                    <div class="system-title">이메일 서버</div>
+                    <div class="system-description">
+                        Exchange/Outlook 서버와의 안전한 연동을 통해 녹음파일을 업로드한 사용자에게 회의록을 자동 전송
+                    </div>
+                    <div class="system-features">
+                        <span class="feature-badge">Exchange API</span>
+                        <span class="feature-badge">SMTP Protocol</span>
+                        <span class="feature-badge">OAuth 2.0</span>
+                        <span class="feature-badge">TLS 암호화</span>
+                    </div>
+                </div>
+                
+                <div class="system-card">
+                    <div class="system-icon">👥</div>
+                    <div class="system-title">인사 시스템</div>
+                    <div class="system-description">
+                        녹음파일을 전송한 사용자 정보를 실시간으로 조회하여 회의록 전송 대상자 식별 및 이메일 주소 확인
+                    </div>
+                    <div class="system-features">
+                        <span class="feature-badge">HR Database</span>
+                        <span class="feature-badge">사용자 조회</span>
+                        <span class="feature-badge">권한 관리</span>
+                        <span class="feature-badge">실시간 조회</span>
+                    </div>
+                </div>
+                
+                <div class="system-card">
+                    <div class="system-icon">📁</div>
+                    <div class="system-title">문서 관리 시스템</div>
+                    <div class="system-description">
+                        생성된 회의록을 자동으로 분류하여 저장하고 향후 검색 및 참조를 위한 아카이브 관리
+                    </div>
+                    <div class="system-features">
+                        <span class="feature-badge">Document Store</span>
+                        <span class="feature-badge">Auto Archive</span>
+                        <span class="feature-badge">Version Control</span>
+                        <span class="feature-badge">Search Index</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 혜택 섹션 -->
+        <div class="benefits-section">
+            <div class="benefits-title">
+                ✨ 주요 혜택 및 성과
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-title">⏰ 업무 효율성 극대화</div>
+                    <div class="benefit-description">
+                        수동 회의록 작성 시간을 87% 단축하여 핵심 업무에 집중할 수 있는 시간 확보
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-title">🎯 정확도 및 일관성</div>
+                    <div class="benefit-description">
+                        AI 기반 자동 처리로 인적 오류를 최소화하고 회의록 포맷의 일관성 보장
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-title">📤 개인화된 전송</div>
+                    <div class="benefit-description">
+                        녹음을 진행한 사용자에게만 회의록이 전송되어 개인 업무 효율성과 정보 보안성 확보
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-title">🔍 검색 가능한 아카이브</div>
+                    <div class="benefit-description">
+                        모든 회의록이 자동으로 색인화되어 향후 정보 검색 및 의사결정 참고 자료로 활용
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

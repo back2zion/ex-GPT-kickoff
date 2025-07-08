@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. 부처별 인터뷰 결과 - ex-GPT 프로젝트</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <style>
+        /* 인터뷰 결과 페이지 전용 스타일 */
+        body {
+            font-size: 18px;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 2rem;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 4rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+
+        .page-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.6rem;
+            color: #666;
+        }
+
+        /* 알림 */
+        .alert {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            color: #2e7d32;
+        }
+
+        .alert strong {
+            color: #1b5e20;
+        }
+
+        /* 컨텐츠 그리드 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-top: 6px solid #1976d2;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+
+        /* 카드 드롭다운 스타일링 */
+        .card-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+
+        .card-dropdown.active {
+            max-height: 3000px;
+            margin-top: 20px;
+        }
+
+        .dropdown-feature {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-feature:hover {
+            background: #e3f2fd !important;
+        }
+
+        .dropdown-arrow {
+            float: right;
+            transition: transform 0.3s ease;
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .dropdown-feature.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        /* 인터뷰 결과 스타일 */
+        .requirement-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 3px solid #1976d2;
+        }
+
+        .requirement-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .requirement-desc {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        /* 우선순위 섹션 */
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .priority-item {
+            background: #d1ecf1;
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #bee5eb;
+        }
+
+        .priority-label {
+            font-weight: 600;
+            color: #0c5460;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .priority-value {
+            color: #0c5460;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        /* 하이라이트 */
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            color: #856404;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar">
+        <div class="utility-container">
+            <div class="utility-left">
+                <span>🚀 ex-GPT 고도화 프로젝트</span>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <div class="logo-partnership">
+                    <a href="main_index.html">
+                        <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                    </a>
+                    <span class="partnership-divider">×</span>
+                    <a href="#" class="datastreams-logo-img">
+                        <img src="images/ds_logo.svg" alt="DataStreams" class="ds-logo-img">
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">3. 순회 인터뷰 결과 분석</h1>
+                <p class="page-subtitle">🎤 사용자 요구사항 및 현황 진단 결과 - 총 148명 참여</p>
+            </div>
+
+            <div class="alert">
+                <strong>📊 인터뷰 규모:</strong> 총 31개 부처, 148명 참여 | <strong>🔍 핵심 이슈:</strong> 정확도 및 정합성 부족, UI 복잡성, 멀티턴 대화 기능 부재, 특화 기능 요청 증가
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card" id="department-interviews">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('department-interviews-content')">
+                        🏛️ 부처별 인터뷰 결과
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="department-interviews-content">
+                        <div class="highlight">
+                            <strong>⚠️ 현재 시스템의 주요 문제점:</strong><br>
+                            • 파싱 오류율 20% 수준으로 높음 (정확한 측정 기준 불명확)<br>
+                            • 권한 체계가 기존 시스템과 연동 부족<br>
+                            • 멀티턴 대화 지원 부재로 복잡한 업무 처리 제한<br>
+                            • HWP 파일 생성 기능 부재 (마크다운 출력으로 대체 필요)
+                        </div>
+
+                        <div class="requirement-item">
+                            <div class="requirement-title">🏛️ 감사처 인터뷰 결과 (4명 참여)</div>
+                            <div class="requirement-desc">
+                                <strong>주요 개선사항:</strong> "규정 및 법령의 현행화 미흡, 단위 표시 오류, 감사사례집 검색 정합성 저하"<br><br>
+                                <strong>🔄 멀티턴 대화 기능:</strong> 이전 질문과 연계된 답변 제공으로 복잡한 감사 업무 지원<br>
+                                <strong>🔍 처분장 검색 확대:</strong> 현재 2년치에서 10년치로 검색 범위 확대<br>
+                                <strong>📊 정형화된 패턴 데이터:</strong> 일상감사 개선사항 및 징계양정 기준 데이터 학습<br>
+                                <strong>📝 답변 길이 조절 기능:</strong> 100자, 200자 제한 등 개조식/문장형 선택 옵션
+                            </div>
+                        </div>
+
+                        <div class="requirement-item">
+                            <div class="requirement-title">📢 홍보처 인터뷰 결과 (5명 참여)</div>
+                            <div class="requirement-desc">
+                                <strong>주요 개선사항:</strong> "보도자료 검색 시 연관성 없는 내용이 섞여 나옴"<br><br>
+                                <strong>🎨 멀티모달 검색 기능:</strong> 사진, 도면 등 이미지 기반 자료의 메타데이터 활용 검색<br>
+                                <strong>📚 역사 자료 학습:</strong> 50년사, 40년사 등 한국도로공사 역사 자료 통합<br>
+                                <strong>📰 보도자료 품질 향상:</strong> 검색 결과의 연관성 개선 및 정확도 향상
+                            </div>
+                        </div>
+
+                        <div class="requirement-item">
+                            <div class="requirement-title">🚀 미래전략처 인터뷰 결과 (7명 참여)</div>
+                            <div class="requirement-desc">
+                                <strong>주요 논의사항:</strong> "학습데이터 공유 방안, 모바일 연동, 담당자 검색 기능, 개인화 서비스"<br><br>
+                                <strong>👤 개인화 서비스 구현:</strong> 기존 권한 체계 연동, 개인별 채팅 히스토리 관리<br>
+                                <strong>📱 모바일 오피스 연동:</strong> 모바일 환경에서의 seamless 업무 연계<br>
+                                <strong>🔍 담당자 검색 기능:</strong> 업무별 담당자 정보 및 연락처 검색
+                            </div>
+                        </div>
+
+                        <div class="requirement-item">
+                            <div class="requirement-title">🏗️ 건설처 인터뷰 결과 (7명 참여)</div>
+                            <div class="requirement-desc">
+                                <strong>주요 개선사항:</strong> "기술기준 검색 정확도 부족, 도면/설계 자료 처리 한계"<br><br>
+                                <strong>🎨 멀티모달 처리:</strong> 도면, 설계도, 기술도표 등 이미지 기반 자료 분석<br>
+                                <strong>⚠️ 공정별 위험성 평가:</strong> 도로 건설 관련 법령 기반 표준 도출 및 안전 기준<br>
+                                <strong>📐 기술기준 DB 확장:</strong> 설계기준, 시공기준 등 전문 기술자료 학습
+                            </div>
+                        </div>
+
+                        <div class="requirement-item">
+                            <div class="requirement-title">🏢 기타 부서 공통 요구사항</div>
+                            <div class="requirement-desc">
+                                <strong>총 9개 부서 추가 의견:</strong> "UI 복잡성, 피드백 기능 오류, 특화 업무 지원 부족"<br><br>
+                                <strong>📁 파일 업로드 기능:</strong> 개인별 파일 업로드, 중복 검증, 메타데이터 관리 시스템<br>
+                                <strong>🎤 STT 기반 회의록 작성:</strong> 음성 → 텍스트 전사 → 요약 → 이메일 자동 전송<br>
+                                <strong>⚖️ 법무정보 시스템 연동:</strong> 판례 검색 및 법령 해석 기능<br>
+                                <strong>💼 업무별 특화 기능:</strong> 회계, 인사, 노무 등 각 업무 영역별 전문 기능
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card" id="priority-insights">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('priority-insights-content')">
+                        📈 종합 분석 및 우선순위
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="priority-insights-content">
+                        <div class="priority-grid">
+                            <div class="priority-item">
+                                <div class="priority-label">🔥 최우선 요구</div>
+                                <div class="priority-value">멀티턴 대화</div>
+                            </div>
+                            <div class="priority-item">
+                                <div class="priority-label">🥇 우선순위 1</div>
+                                <div class="priority-value">파일 업로드 & 분석</div>
+                            </div>
+                            <div class="priority-item">
+                                <div class="priority-label">🥈 우선순위 2</div>
+                                <div class="priority-value">사진 검색</div>
+                            </div>
+                            <div class="priority-item">
+                                <div class="priority-label">🥉 우선순위 3</div>
+                                <div class="priority-value">레거시 시스템 연동</div>
+                            </div>
+                            <div class="priority-item">
+                                <div class="priority-label">⭐ 우선순위 4</div>
+                                <div class="priority-value">멀티모달 처리</div>
+                            </div>
+                        </div>
+
+                        <div class="highlight" style="margin-top: 2rem;">
+                            <strong>🎯 핵심 개선 방향 (148명 인터뷰 종합):</strong><br>
+                            • <strong>🔗 기존 권한 체계 연동을 통한 개인화 서비스 구현</strong><br>
+                            • <strong>💬 멀티턴 대화를 통한 복잡한 업무 처리 지원</strong><br>
+                            • <strong>🎨 멀티모달 기능으로 이미지, 도면 처리 지원</strong><br>
+                            • <strong>🔗 하이포털 등 레거시 시스템과의 API 연동</strong><br>
+                            • <strong>🏢 업무별 특화 기능 개발 (감사, 건설, 홍보, 법무 등)</strong><br>
+                            • <strong>🎨 UI 단순화 및 사용자 경험 개선</strong><br>
+                            • <strong>🔒 개인정보 보호 및 데이터 품질 관리 체계 구축</strong>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × DataStreams
+            </div>
+            <div class="footer-partnership">
+                <div class="partner-logo">🏢 한국도로공사</div>
+                <div class="partnership-icon">×</div>
+                <div class="partner-logo">🚀 DataStreams</div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        // 드롭다운 토글 함수
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const dropdownFeature = dropdown.parentElement.querySelector('.dropdown-feature');
+            
+            if (dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+                dropdownFeature.classList.remove('active');
+            } else {
+                dropdown.classList.add('active');
+                dropdownFeature.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.info-card');
+            
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

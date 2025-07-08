@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. 현 학습데이터 현황 (AS-IS vs TO-BE) - ex-GPT 프로젝트</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <style>
+        body {
+            font-size: 18px;
+        }
+        
+        .main-content {
+            margin-top: 113px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            max-width: 100%;
+            width: 100%;
+        }
+        .content-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 1rem;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 4rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+        .page-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        .page-subtitle {
+            font-size: 1.6rem;
+            color: #666;
+        }
+        
+        .architecture-section {
+            background: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 3rem 0;
+            overflow: visible;
+            width: 100%;
+        }
+
+        .section-title-main {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 3rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .section-icon-main {
+            font-size: 3rem;
+        }
+
+        .mermaid-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            overflow-x: hidden;
+            overflow-y: visible;
+            min-height: 2500px;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+        }
+
+        .mermaid {
+            text-align: center;
+            width: 100%;
+            min-height: 2500px;
+            font-size: 100px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mermaid svg {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 2500px !important;
+            margin: 0 !important;
+            font-size: 100px !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header">
+                <h1 class="page-title">4. 학습데이터 현황</h1>
+                <p class="page-subtitle">AS-IS vs TO-BE 비교 분석 (Knowledge Parser 통합)</p>
+            </div>    
+    
+    <div class="architecture-section" id="architecture">
+        <h2 class="section-title-main">
+            <span class="section-icon-main">📊</span>
+            ex-GPT 파일 업로드 및 처리 흐름도 (Knowledge Parser 기반)
+        </h2>
+        <div class="mermaid-container">
+            <div class="mermaid">
+                graph TD
+                subgraph "📥 사용자 파일 업로드 입력"
+                    A1[📎 법령규정 파일 업로드<br/>HWP, PDF, DOCX]
+                    A2[📎 국정감사 자료 업로드<br/>Excel, PDF, PPT]
+                    A3[📎 R&D 보고서 업로드<br/>다양한 문서 형식]
+                    A4[📎 정책 자료 업로드<br/>정부 공시 문서]
+                    A5[📎 음성 파일 업로드<br/>회의록, 강의 음성]
+                    A6[📎 이미지 업로드<br/>PNG, JPG, 기술 이미지]
+                end
+
+                subgraph "🔄 Knowledge Parser (하이브리드)"
+                    B1{Text-Table Parser<br/>구조화된 문서 특화<br/>법령, 사규 처리}
+                    B2{Casual Parser<br/>발표자료, 팜플렛<br/>VLM 기반 페이지 이해}
+                    B3{Whisper-Large-v3<br/>음성-텍스트 변환<br/>평균 1.6s/page}
+                    B4{Florence-2-Large<br/>이미지-텍스트 추출<br/>94% 정확도}
+                    C1[하이브리드 파싱<br/>페이지별 특성 파악<br/>최적 파서 자동 선택]
+                end
+
+                subgraph "📋 문서 구조 이해 및 지식 구조화"
+                    D1[문서 계층 구조 파악<br/>제목/소제목/조/항 검출 99%]
+                    D2[표 구조 이해<br/>복잡한 표 인식 97%]
+                    D3[블록 다이어그램 이해<br/>CBD dataset 88.9%]
+                    D4[그래프/차트 이해<br/>bar, pie, line 차트 63.8%]
+                    D5[문서 내 문맥 정보 추출<br/>단락 간 상하관계 파악]
+                end
+
+                subgraph "✅ 품질 검증 및 보안"
+                    E1{개인정보 자동 검출<br/>99% 정확도<br/>월별 자동 점검}
+                    E2{중복 파일 검증<br/>기존 문서와 비교<br/>버전 관리}
+                    E3{Human in the Loop<br/>최종 품질 검증<br/>전문가 리뷰}
+                end
+
+                subgraph "💾 Qdrant 벡터 데이터베이스"
+                    F1[벡터 임베딩<br/>문서 청크별 벡터화]
+                    F2[메타데이터 생성<br/>문서 정보, 권한, 태그]
+                    F3[분산 저장<br/>40,000+ 문서 관리]
+                end
+
+                subgraph "👤 실시간 사용자 상호작용"
+                    G1[사용자 로그인<br/>기존 권한 시스템 연동]
+                    G2[실시간 파일 업로드<br/>드래그 & 드롭]
+                    G3[자연어 질의<br/>음성/텍스트 입력]
+                end
+
+                subgraph "🧠 LangGraph 지능형 라우팅"
+                    H1{사용자 권한 확인<br/>개인화된 데이터 접근}
+                    H2{질의 유형 분석<br/>최적 AI 모델 선택}
+                    H3{멀티턴 대화 관리<br/>컨텍스트 유지}
+                end
+
+                subgraph "🤖 멀티모달 AI 처리 엔진"
+                    I1[🧠 QWen3-235B<br/>일반 질의응답]
+                    I2[🧠 Llama4-Maverick 400B<br/>복잡한 추론]
+                    I3[🧠 MiniMax-M1 456B<br/>전문 도메인]
+                    I4[🔍 RAG<br/>96.3% 검색 정확도]
+                    I5[🔧 MCP 도구 연동<br/>회의실/배차/결재]
+                    I6[🖼️ Florence-2 비전<br/>이미지 질의응답]
+                    I7[🎤 Whisper STT<br/>음성 질의 처리]
+                end
+
+                subgraph "📤 지능형 답변 생성"
+                    J1[답변 생성 및 검증<br/>다중 소스 통합]
+                    J2[마크다운 형식 출력<br/>구조화된 답변]
+                    J3[원본 파일 링크<br/>출처 명시]
+                    J4[콘텐츠 프리뷰<br/>관련 문서 미리보기]
+                end
+
+                subgraph "📊 시스템 모니터링 및 관리"
+                    K1[H100 GPU 클러스터<br/>실시간 성능 모니터링]
+                    K2[사용자 활동 로깅<br/>접근 권한 추적]
+                    K3[데이터 품질 보고서<br/>월별 자동 생성]
+                    K4[시스템 백업<br/>데이터 무결성 보장]
+                end
+
+                %% 파일 업로드 플로우
+                A1 --> B1
+                A2 --> B1
+                A3 --> B1
+                A4 --> B1
+                A5 --> B3
+                A6 --> B4
+
+                %% 하이브리드 파싱
+                B1 --> C1
+                B2 --> C1
+                B3 --> C1
+                B4 --> C1
+
+                %% 문서 구조 이해
+                C1 --> D1
+                C1 --> D2
+                C1 --> D3
+                C1 --> D4
+                C1 --> D5
+
+                %% 품질 검증
+                D1 --> E1
+                D2 --> E1
+                D3 --> E1
+                D4 --> E1
+                D5 --> E1
+                E1 --> E2
+                E2 --> E3
+
+                %% 벡터 저장
+                E3 --> F1
+                F1 --> F2
+                F2 --> F3
+
+                %% 사용자 상호작용
+                G1 --> H1
+                G2 --> B1
+                G2 --> B3
+                G2 --> B4
+                G3 --> H2
+
+                %% 라우팅 및 AI 처리
+                H1 --> H2
+                H2 --> H3
+                H3 --> I1
+                H3 --> I2
+                H3 --> I3
+                H3 --> I4
+                H3 --> I5
+                H3 --> I6
+                H3 --> I7
+
+                %% RAG 검색
+                I4 --> F3
+                F3 --> J1
+
+                %% 답변 통합
+                I1 --> J1
+                I2 --> J1
+                I3 --> J1
+                I5 --> J1
+                I6 --> J1
+                I7 --> J1
+
+                %% 출력
+                J1 --> J2
+                J2 --> J3
+                J3 --> J4
+
+                %% 모니터링
+                F3 --> K1
+                J1 --> K2
+                K1 --> K3
+                K2 --> K3
+                K3 --> K4
+
+                %% 스타일링
+                classDef upload fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+                classDef parser fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+                classDef structure fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+                classDef quality fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+                classDef storage fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+                classDef user fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+                classDef routing fill:#f1f8e9,stroke:#689f38,stroke-width:3px
+                classDef ai fill:#fef7e0,stroke:#ffa000,stroke-width:3px
+                classDef output fill:#e8eaf6,stroke:#5e35b1,stroke-width:3px
+                classDef monitor fill:#fff8e1,stroke:#f9a825,stroke-width:3px
+
+                class A1,A2,A3,A4,A5,A6 upload
+                class B1,B2,B3,B4,C1 parser
+                class D1,D2,D3,D4,D5 structure
+                class E1,E2,E3 quality
+                class F1,F2,F3 storage
+                class G1,G2,G3 user
+                class H1,H2,H3 routing
+                class I1,I2,I3,I4,I5,I6,I7 ai
+                class J1,J2,J3,J4 output
+                class K1,K2,K3,K4 monitor
+        </div>
+    </div>
+        <div style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1976d2;">
+            <h3 style="color: #1976d2; margin-bottom: 1.5rem; font-size: 1.8rem;">🔧 Knowledge Parser 핵심 성능</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+                <div style="background: white; padding: 2rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong style="font-size: 1.3rem; color: #1976d2;">문서 처리 성능</strong><br/>
+                    <span style="font-size: 1.1rem; line-height: 2;">• 평균 1.6s/page 파싱 속도<br/>
+                    • 표 인식 성능: 97%<br/>
+                    • OCR 성능: 81% (다양한 형식)</span>
+                </div>
+                <div style="background: white; padding: 2rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong style="font-size: 1.3rem; color: #1976d2;">AI 모델 통합</strong><br/>
+                    <span style="font-size: 1.1rem; line-height: 2;">• QWen3-235B-A22B<br/>
+                    • Llama4-Maverick 400B<br/>
+                    • MiniMax-M1 456B</span>
+                </div>
+                <div style="background: white; padding: 2rem; border-radius: 6px; border: 1px solid #e0e0e0;">
+                    <strong style="font-size: 1.3rem; color: #1976d2;">멀티모달 지원</strong><br/>
+                    <span style="font-size: 1.1rem; line-height: 2;">• Florence-2-Large 0.77B<br/>
+                    • Whisper-Large-v3<br/>
+                    • Hybrid RAG 96.3% 정확도</span>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </main>
+
+    <!-- Mermaid 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+
+    <script>
+        // Mermaid 초기화
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 50,
+                nodeSpacing: 30,
+                rankSpacing: 300
+            },
+            themeVariables: {
+                primaryColor: '#e3f2fd',
+                primaryTextColor: '#1976d2',
+                primaryBorderColor: '#1976d2',
+                lineColor: '#757575',
+                secondaryColor: '#f3e5f5',
+                tertiaryColor: '#e8f5e8',
+                clusterBkg: 'rgba(255, 255, 255, 0.9)',
+                clusterBorder: '#1976d2',
+                edgeLabelBackground: '#ffffff',
+                defaultLinkColor: '#424242'
+            },
+            maxTextSize: 90000,
+            maxEdges: 200
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .mermaid .node rect,
+                    .mermaid .node circle,
+                    .mermaid .node ellipse,
+                    .mermaid .node polygon {
+                        transition: all 0.3s ease !important;
+                        cursor: pointer !important;
+                        stroke-width: 3px !important;
+                    }
+                    
+                    .mermaid .node:hover rect,
+                    .mermaid .node:hover circle,
+                    .mermaid .node:hover ellipse,
+                    .mermaid .node:hover polygon {
+                        filter: drop-shadow(0 12px 24px rgba(25, 118, 210, 0.6)) drop-shadow(0 6px 12px rgba(25, 118, 210, 0.4)) !important;
+                        stroke-width: 6px !important;
+                        transform: scale(1.02) !important;
+                    }
+                    
+                    .mermaid .node:hover .nodeLabel {
+                        font-weight: bold !important;
+                        font-size: 80px !important;
+                        fill: #0d47a1 !important;
+                    }
+                    
+                    .mermaid .nodeLabel {
+                        font-size: 100px !important;
+                        font-weight: 400 !important;
+                    }
+                    
+                    .mermaid .cluster rect {
+                        stroke-width: 5px !important;
+                        margin: 40px !important;
+                        padding: 40px !important;
+                    }
+                    
+                    .mermaid .cluster .cluster-label {
+                        font-size: 110px !important;
+                        font-weight: 400 !important;
+                        margin-bottom: 30px !important;
+                        padding: 20px !important;
+                        background: rgba(255,255,255,0.9) !important;
+                        border-radius: 8px !important;
+                    }
+                    
+                    .mermaid .cluster {
+                        margin: 50px !important;
+                        padding: 50px !important;
+                    }
+                    
+                    .mermaid text {
+                        font-size: 100px !important;
+                        font-weight: 400 !important;
+                        font-family: 'Arial', 'Helvetica', sans-serif !important;
+                    }
+                    
+                    .mermaid .node rect,
+                    .mermaid .node circle,
+                    .mermaid .node ellipse,
+                    .mermaid .node polygon {
+                        min-width: 600px !important;
+                        min-height: 250px !important;
+                    }
+                    
+                    .mermaid .flowchart-link {
+                        stroke-width: 4px !important;
+                        stroke: #424242 !important;
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .mermaid .marker {
+                        fill: #424242 !important;
+                        stroke: #424242 !important;
+                        transition: all 0.3s ease !important;
+                    }
+                    
+                    .highlighted-edge {
+                        stroke-width: 8px !important;
+                        stroke: #1976d2 !important;
+                        filter: drop-shadow(0 4px 8px rgba(25, 118, 210, 0.5)) !important;
+                    }
+                    
+                    .highlighted-marker {
+                        fill: #1976d2 !important;
+                        stroke: #1976d2 !important;
+                        transform: scale(1.3) !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // 노드 호버 시 연결된 엣지 강조
+                const nodes = document.querySelectorAll('.mermaid .node');
+                nodes.forEach(node => {
+                    node.addEventListener('mouseenter', function() {
+                        const nodeId = this.getAttribute('id') || this.className.match(/flowchart-(\w+)/)?.[1];
+                        if (nodeId) {
+                            // 관련 엣지 찾기
+                            const edges = document.querySelectorAll(`[class*="${nodeId}"], [id*="${nodeId}"]`);
+                            edges.forEach(edge => {
+                                if (edge.classList.contains('flowchart-link') || edge.tagName === 'path') {
+                                    edge.classList.add('highlighted-edge');
+                                }
+                                if (edge.classList.contains('marker') || edge.tagName === 'marker') {
+                                    edge.classList.add('highlighted-marker');
+                                }
+                            });
+                        }
+                    });
+                    
+                    node.addEventListener('mouseleave', function() {
+                        // 모든 강조 효과 제거
+                        document.querySelectorAll('.highlighted-edge').forEach(edge => {
+                            edge.classList.remove('highlighted-edge');
+                        });
+                        document.querySelectorAll('.highlighted-marker').forEach(marker => {
+                            marker.classList.remove('highlighted-marker');
+                        });
+                    });
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

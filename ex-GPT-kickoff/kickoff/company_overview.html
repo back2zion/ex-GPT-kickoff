@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. 데이터스트림즈 현황 - ex-GPT 프로젝트</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <!-- 강제 헤더 스타일 -->
+    <style type="text/css">
+        /* 헤더 강제 표시 스타일 */
+        .utility-bar { display: block !important; }
+        .main-header { display: block !important; }
+        .header-container { display: flex !important; }
+        .main-nav { display: flex !important; }
+    </style>
+    <style>
+        /* 회사 개요 페이지 전용 스타일 */
+        body {
+            font-size: 18px;
+        }
+
+        /* 메인 콘텐츠 */
+        .main-content {
+            margin-top: 113px;
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 2rem;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            padding: 4rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+
+        .page-title {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.6rem;
+            color: #666;
+        }
+
+        /* 컨텐츠 그리드 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(4, auto);
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-top: 6px solid #1976d2;
+            width: 100%;
+            max-width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(45deg, #1976d2, #1565c0);
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #1976d2;
+            margin-right: 1rem;
+            border-radius: 2px;
+        }
+
+        /* 메트릭 그리드 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        /* 특징 리스트 */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #1976d2;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* 카드 드롭다운 스타일링 */
+        .card-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+
+        .card-dropdown.active {
+            max-height: 2000px;
+            margin-top: 20px;
+        }
+
+        /* 경쟁우위 드롭다운 스타일링 */
+        .dropdown-feature {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-feature:hover {
+            background: #e3f2fd !important;
+        }
+
+        .dropdown-arrow {
+            float: right;
+            transition: transform 0.3s ease;
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .dropdown-feature.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .competitive-dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            margin-top: 0;
+        }
+
+        .competitive-dropdown.active {
+            max-height: 2000px;
+            margin-top: 20px;
+        }
+
+        .competitive-advantage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .advantage-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #1976d2;
+            border: 1px solid #e0e0e0;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+        }
+
+        .advantage-highlight {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+        }
+
+        .advantage-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .advantage-icon .icon {
+            font-size: 20px;
+        }
+
+        .advantage-content h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .advantage-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .advantage-content li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #555;
+            line-height: 1.5;
+            font-size: 1.05rem;
+        }
+
+        .advantage-content li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .project-timeline {
+            margin: 15px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .timeline-date {
+            background: #1976d2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 15px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .timeline-desc {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .technical-stack {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .technical-stack h5 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 1.0rem;
+            font-weight: 500;
+        }
+
+        .differentiation-summary {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 2px solid #1976d2;
+        }
+
+        .differentiation-summary h4 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-icon {
+            color: #ffc107;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            border-left: 3px solid #1976d2;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .summary-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* 반응형 및 호환성 개선 */
+        
+        /* CSS Grid 폴백 */
+        .content-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        @supports (display: grid) {
+            .content-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, auto);
+                gap: 2rem;
+                margin-bottom: 3rem;
+                max-height: none;
+                overflow: visible;
+            }
+        }
+        
+        .metrics-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        @supports (display: grid) {
+            .metrics-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        .competitive-advantage-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        @supports (display: grid) {
+            .competitive-advantage-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        .summary-grid {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        @supports (display: grid) {
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+        }
+        
+        /* Transform 호환성 */
+        .info-card:hover {
+            -webkit-transform: translateY(-4px);
+            -ms-transform: translateY(-4px);
+            transform: translateY(-4px);
+        }
+        
+        .advantage-card:hover {
+            -webkit-transform: translateY(-2px);
+            -ms-transform: translateY(-2px);
+            transform: translateY(-2px);
+        }
+        
+        .feature-item:hover {
+            -webkit-transform: translateX(5px);
+            -ms-transform: translateX(5px);
+            transform: translateX(5px);
+        }
+        
+        /* Flexbox 호환성 */
+        .card-title {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+        
+        .advantage-icon {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+        
+        /* 그라데이션 호환성 */
+        .main-content {
+            background: #f8f9fa; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: -o-linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+        }
+        
+        .advantage-icon {
+            background: #1976d2; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #1976d2, #42a5f5);
+            background: -o-linear-gradient(135deg, #1976d2, #42a5f5);
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+        }
+        
+        .advantage-highlight {
+            background: #fff; /* 폴백 */
+            background: -webkit-linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            background: -o-linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+        }
+        
+        /* IE11 대응 */
+        @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+            .competitive-advantage-grid {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+        }
+        
+        /* 성능 최적화 */
+        .info-card, .advantage-card, .feature-item {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        /* 접근성 개선 */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                -webkit-transition: none !important;
+                transition: none !important;
+                -webkit-animation: none !important;
+                animation: none !important;
+            }
+        }
+        
+        /* 추가 브레이크포인트 */
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .competitive-advantage-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 상단 유틸리티 바 -->
+    <div class="utility-bar" style="background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color: white; padding: 0.5rem 0; font-size: 0.85rem; position: fixed; top: 0; left: 0; right: 0; z-index: 1001; height: 33px; line-height: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="utility-container" style="width: 100%; padding: 0 4rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+            <div class="utility-left" style="display: flex; align-items: center; gap: 1rem; font-weight: 500;">
+                <span>🚀 ex-GPT 고도화 프로젝트</span>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 메인 헤더 -->
+    <header class="main-header" style="background: white; border-bottom: 1px solid #e0e0e0; position: fixed; top: 33px; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 0;">
+        <div class="header-container" style="width: 100%; padding: 0 4rem; display: flex; justify-content: space-between; align-items: center; height: 80px;">
+            <div class="logo-area">
+                <div class="logo-partnership">
+                    <a href="main_index.html">
+                        <img src="images/한국도로공사_logo.png" alt="한국도로공사" class="logo-img">
+                    </a>
+                    <span class="partnership-divider">×</span>
+                    <a href="#" class="datastreams-logo-img">
+                        <img src="images/ds_logo.svg" alt="DataStreams" class="ds-logo-img">
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav" style="display: flex; gap: 0; position: relative;">
+                <div class="nav-item">
+                    <a href="company_overview.html" class="nav-link active">1. 데이터스트림즈 현황</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🏢 회사 개요</div>
+                                <a href="company_overview.html#company-overview" class="dropdown-item">📊 회사 개요 및 역량</a>
+                                <a href="company_overview.html#project-experience" class="dropdown-item">🚀 프로젝트 수행 경험</a>
+                                <a href="company_overview.html#competitive-advantage" class="dropdown-item">⭐ 경쟁 우위 및 차별화</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="team_organization.html" class="nav-link">2. 투입인력, 조직, 일정</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">👥 팀 구성 및 일정</div>
+                                <a href="team_organization.html#team-table" class="dropdown-item">🎯 핵심 팀 구성</a>
+                                <a href="team_organization.html#team-roles" class="dropdown-item">🏢 주요 팀원 역할 및 책임</a>
+                                <a href="team_organization.html#project-schedule" class="dropdown-item">📅 프로젝트 일정</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="interview_results.html" class="nav-link">3. 순회 인터뷰 결과 분석</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">🎤 인터뷰 결과 분석</div>
+                                <a href="interview_results.html#department-interviews" class="dropdown-item">🏑️ 부처별 인터뷰 결과</a>
+                                <a href="interview_results.html#priority-insights" class="dropdown-item">📈 종합 분석 및 우선순위</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <a href="current_status.html" class="nav-link">4. 학습데이터 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="enhancement_plan.html" class="nav-link">5. 기능 AS-IS vs TO-BE</a>
+                </div>
+                <div class="nav-item">
+                    <a href="customer_requirements.html" class="nav-link">6. 한국도로공사 지원 요청사항</a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <div class="dropdown-section-title">📋 한국도로공사 지원 요청사항</div>
+                                <a href="customer_requirements.html#infrastructure" class="dropdown-item">🖥️ 인프라 및 시스템 지원</a>
+                                <a href="customer_requirements.html#api-support" class="dropdown-item">🔗 시스템 연계 및 API 지원</a>
+                                <a href="customer_requirements.html#data-support" class="dropdown-item">📊 데이터 및 컨텐츠 지원</a>
+                                <a href="customer_requirements.html#collaboration" class="dropdown-item">🤝 협업 및 커뮤니케이션</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="page-header" id="company-overview">
+                <h1 class="page-title">1. 데이터스트림즈 현황</h1>
+                <p class="page-subtitle">한국도로공사 ex-GPT 고도화 프로젝트 수행사 현황</p>
+            </div>
+
+            <div class="content-grid">
+                <div class="info-card">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('growth-investment')">
+                        🌟 성장과 변화를 위해 연구개발에 투자를 아끼지 않습니다
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="growth-investment">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value">18<span style="font-size: 0.8em;">%</span></div>
+                                <div class="metric-label">📊 R&D to Sales<br/>매출 대비 연구개발 비율<br/>지난 5년간</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">+800</div>
+                                <div class="metric-label">👥 고객층<br/>+400 대기업 및 정부기관</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">28<span style="font-size: 0.8em;">%</span></div>
+                                <div class="metric-label">🚀 CAGR<br/>매년 28%씩<br/>5년간 매출 성장률</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">200</div>
+                                <div class="metric-label">👨‍💼 직원 수<br/>창업이래 함께하는 최고의 팀과<br/>각 분야의 최고 전문가들</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">53</div>
+                                <div class="metric-label">🏆 지적 재산<br/>특허, GS 인증,<br/>보안 및 기타 IP 자산</div>
+                            </div>
+                        </div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">🏗️ 데이터 패브릭 아키텍처</div>
+                                <div class="feature-desc">14개 이상의 소프트웨어를 하나의 데이터 패브릭 플랫폼으로 통합하여 일관되고 안정적인 시스템 제공</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🏛️ 공공부문 20년 전문성으로 예상위험 방지</div>
+                                <div class="feature-desc">정부기관 및 공기업 400+ 프로젝트 수행으로 공공부문 특유의 규정, 프로세스, 보안 요구사항 완벽 이해</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🤖 매출 대비 18% R&D 투자 AI 전문성</div>
+                                <div class="feature-desc">GraphRAG, 온톨로지, 멀티 LLM 통합 등 최신 AI 기술 선도적 도입으로 차세대 ex-GPT 구현</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('core-business')">
+                        💼 핵심 사업 영역
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="core-business">
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">🔄 Data Migration & Integration</div>
+                                <div class="feature-desc">대용량 데이터 추출 및 통합, 데이터 파이프라인 구축, 초고속 데이터 스토어 및 분산 검색 처리</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🛡️ Data Governance</div>
+                                <div class="feature-desc">데이터 거버넌스 아키텍처, 데이터 가시성 아키텍처 서비스, 마스터데이터 관리(MDM), 메타 데이터 관리</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🏭 Data Warehouse & Big Data Platform</div>
+                                <div class="feature-desc">초고속 빅데이터 분석, In-Memory기반 분석, IoT 데이터 수집/통합/분석</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">☁️ Cloud Data Fabric Platform</div>
+                                <div class="feature-desc">Active MetaData 활용한 자동화 관리, 높은 성능과 확장성, 데이터 통합 및 처리</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card" id="project-experience">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('project-capability')">
+                        🚀 ex-GPT 고도화 수행 역량
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="project-capability">
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <div class="feature-title">🕸️ GraphRAG & 온톨로지 기반 지식 플랫폼</div>
+                                <div class="feature-desc">조선해양 온톨로지 기반 지식 플랫폼 구축으로 복잡한 도메인 지식 체계화 및 GraphRAG 활용 역량 입증</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🧠 RAG 기반 로컬 LLM 시스템</div>
+                                <div class="feature-desc">문서기반 탐색 및 출처 제시 POC로 자연어 질의 처리 및 신뢰성 높은 답변 생성 시스템 구축</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">💰 AML 온톨로지 시스템</div>
+                                <div class="feature-desc">금융 도메인 특화 Financial Crime Detection Platform으로 규제 요구사항 준수 및 높은 정확도 달성 사례</div>
+                            </li>
+                            <li class="feature-item">
+                                <div class="feature-title">🔗 멀티 LLM 통합 플랫폼</div>
+                                <div class="feature-desc">DSLLM으로 여러 LLM을 통합한 플랫폼 구축으로 사용자 친화적 인터페이스 및 실무 적용 가능성 입증</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title dropdown-feature" onclick="toggleDropdown('competitive-advantage')">
+                        🎯 AI 서비스 및 경쟁 우위
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="card-dropdown" id="competitive-advantage">
+                        <div class="feature-desc" style="margin-bottom: 20px; color: #666; font-size: 0.95rem; line-height: 1.6;">
+                            데이터 기반 AI 서비스 모델 설계 및 구현 전략 수립. 공공부문 20년 전문성과 데이터 패브릭 통합 솔루션으로 ex-GPT 고도화 보장
+                        </div>
+                        <div class="competitive-advantage-grid">
+                                    <!-- 공공부문 전문성 -->
+                                    <div class="advantage-card">
+                                        <div class="advantage-icon">
+                                            <span class="icon">🛡️</span>
+                                        </div>
+                                        <div class="advantage-content">
+                                            <h4>공공부문 20년 전문성</h4>
+                                            <ul>
+                                                <li>한국도로공사 등 공공기관 장기 협력 경험</li>
+                                                <li>정부 규제 및 컴플라이언스 요구사항 완벽 이해</li>
+                                                <li>공공부문 특화 보안 체계 및 권한 관리 노하우</li>
+                                                <li>대규모 정부 프로젝트 성공 수행 이력</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- 데이터 패브릭 통합 솔루션 -->
+                                    <div class="advantage-card">
+                                        <div class="advantage-icon">
+                                            <span class="icon">🔗</span>
+                                        </div>
+                                        <div class="advantage-content">
+                                            <h4>데이터 패브릭 통합 솔루션</h4>
+                                            <ul>
+                                                <li>기존 검색 시스템과의 완벽한 호환성 보장</li>
+                                                <li>데이터 중복 검증 및 품질 관리 체계</li>
+                                                <li>멀티모달 검색 인터페이스 및 STT 기반 회의록 자동 생성</li>
+                                                <li>권한별 개인화 서비스 및 레거시 시스템 통합</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI 서비스 설계 및 구현 -->
+                                    <div class="advantage-card">
+                                        <div class="advantage-icon">
+                                            <span class="icon">🧠</span>
+                                        </div>
+                                        <div class="advantage-content">
+                                            <h4>AI 서비스 설계 및 구현 전문성</h4>
+                                            <ul>
+                                                <li>Retrieval-Augmented Generation (RAG) 기반 고도화</li>
+                                                <li>H100 GPU 서버 활용 LLM 추론 파이프라인 최적화</li>
+                                                <li>Qdrant 벡터 데이터베이스 및 LangChain 기반 아키텍처</li>
+                                                <li>파일 업로드 및 멀티턴 대화 컨텍스트 관리</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- 프로젝트 실행력 -->
+                                    <div class="advantage-card advantage-highlight">
+                                        <div class="advantage-icon">
+                                            <span class="icon">🚀</span>
+                                        </div>
+                                        <div class="advantage-content">
+                                            <h4>ex-GPT 고도화 프로젝트 실행력</h4>
+                                            <div class="project-timeline">
+                                                <div class="timeline-item">
+                                                    <span class="timeline-date">Phase 1</span>
+                                                    <span class="timeline-desc">데이터 준비 및 정확도 개선</span>
+                                                </div>
+                                                <div class="timeline-item">
+                                                    <span class="timeline-date">Phase 2</span>
+                                                    <span class="timeline-desc">AI 모델 최적화 및 멀티모달 기능 구현</span>
+                                                </div>
+                                                <div class="timeline-item">
+                                                    <span class="timeline-date">Phase 3</span>
+                                                    <span class="timeline-desc">기능 확장 및 특수업무 지원 기능 고도화</span>
+                                                </div>
+                                            </div>
+                                            <div class="technical-stack">
+                                                <h5>핵심 기술 스택</h5>
+                                                <div class="tech-tags">
+                                                    <span class="tech-tag">Poetry 환경 관리</span>
+                                                    <span class="tech-tag">Flask 웹 애플리케이션</span>
+                                                    <span class="tech-tag">Whisper STT</span>
+                                                    <span class="tech-tag">권한 체계 관리</span>
+                                                    <span class="tech-tag">실시간 파일 처리</span>
+                                                    <span class="tech-tag">API 설계/구현</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 보안 및 안정성 -->
+                                    <div class="advantage-card">
+                                        <div class="advantage-icon">
+                                            <span class="icon">🔒</span>
+                                        </div>
+                                        <div class="advantage-content">
+                                            <h4>공공기관 수준 보안 및 안정성</h4>
+                                            <ul>
+                                                <li>개인정보 보호를 위한 월별 점검 시스템 구축</li>
+                                                <li>휴먼 인 더 루프 방식의 검증 프로세스 적용</li>
+                                                <li>GPU 사용률 추적 및 성능 모니터링</li>
+                                                <li>예방적 유지보수 계획 및 서비스 중단 위험 최소화</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 차별화 요약 -->
+                                <div class="differentiation-summary">
+                                    <h4><span class="summary-icon">⭐</span> 핵심 차별화 포인트</h4>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <strong>검증된 협업 체계:</strong> 데이터스트림즈의 명확한 역할 분담과 책임 기반 프로젝트 관리
+                                        </div>
+                                        <div class="summary-item">
+                                            <strong>실용적 접근:</strong> 단계별 개발 일정 및 사용자 요구사항 기반 고도화 전략
+                                        </div>
+                                        <div class="summary-item">
+                                            <strong>기술적 우수성:</strong> H100 GPU 서버 활용 및 최신 AI 기술 스택 기반 솔루션
+                                        </div>
+                                        <div class="summary-item">
+                                            <strong>지속가능성:</strong> 운영 이후 지속적인 업데이트 및 확장 가능한 아키텍처 설계
+                                        </div>
+                                    </div>
+                                </div>    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-title">ex-GPT 고도화 프로젝트</div>
+            <div class="footer-info">
+                한국도로공사 × DataStreams
+            </div>
+            <div class="footer-partnership">
+                <div class="partner-logo">🏢 한국도로공사</div>
+                <div class="partnership-icon">×</div>
+                <div class="partner-logo">🚀 DataStreams</div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="main_index.html" class="back-button">🏠</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.info-card');
+            
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // 드롭다운 토글 함수
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const dropdownFeature = dropdown.parentElement.querySelector('.dropdown-feature');
+            
+            if (dropdown.classList.contains('active')) {
+                dropdown.classList.remove('active');
+                dropdownFeature.classList.remove('active');
+            } else {
+                dropdown.classList.add('active');
+                dropdownFeature.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
